@@ -23,9 +23,9 @@ const deselect = () => {
       <div v-for="page in docStore.document.pages" :key="page.id" class="relative group">
         <!-- We can wrap it in a container if we want page-level hover actions -->
         
-        <GmDocCover v-if="page.type === 'cover'" :page-data="page" />
-        <GmDocBackCover v-else-if="page.type === 'back-cover'" :page-data="page" />
-        <GmDocPage v-else :page-data="page" />
+        <GmDocCover v-if="page.type === 'cover'" :page="page" />
+        <GmDocBackCover v-else-if="page.type === 'back-cover'" :page="page" />
+        <GmDocPage v-else :page="page" />
         
       </div>
     </template>
