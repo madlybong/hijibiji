@@ -1,0 +1,6 @@
+- You are an AI agent helping with GMDesigner.
+- It is a Bun-based monorepo.
+- Always use `bun` instead of `npm`, `yarn`, or `pnpm`.
+- `apps/desktop` is a Tauri app using Vue 3 and PrimeVue.
+- Keep components modular. Follow conventional commits for commit messages.
+- Read `docs/ai.md` for more context.
