@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import InputText from 'primevue/inputtext';
 import Textarea from 'primevue/textarea';
 import SelectButton from 'primevue/selectbutton';
 import { computed } from 'vue';

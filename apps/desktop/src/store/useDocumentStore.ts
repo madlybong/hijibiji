@@ -28,8 +28,6 @@ export const useDocumentStore = defineStore('document', () => {
       type,
       label: type === 'cover' ? 'Cover' : type === 'back-cover' ? 'Back Cover' : `Page ${pageIndex}`,
       blocks:       [],
-      headerBlocks: [],
-      footerBlocks: [],
       showHeader:   type === 'blank',    // covers have no header by default
       showFooter:   type === 'blank',    // covers have no footer by default
       pageStyle: {
@@ -156,6 +154,8 @@ export const useDocumentStore = defineStore('document', () => {
     deleteBlock,
     updateBlockData,
     updateBlockStyle,
+    toggleBlockHidden,
+    toggleBlockLocked,
     updateBrandSettings,
     selectBlock,
     selectPage,

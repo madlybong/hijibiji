@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+
 import InputText from 'primevue/inputtext';
 import ColorPicker from 'primevue/colorpicker';
 import PropField from './PropField.vue';
@@ -28,14 +28,119 @@ const fontWeightOptions = ['normal', 'bold', '100', '200', '300', '400', '500', 
 </script>
 
 <template>
-  <GmPropSection label="Style" :default-open="false">
+  <div class="flex flex-col gap-4">
+    <!-- LAYOUT SECTION -->
+    <GmPropSection label="Layout" :default-open="true">
+      <div class="grid grid-cols-2 gap-4">
+        <PropField label="Width">
+          <InputText 
+            :modelValue="block.style?.width || ''" 
+            @update:modelValue="v => updateStyle('width', v)"
+            size="small"
+            fluid
+            placeholder="e.g. 100%"
+          />
+        </PropField>
+        <PropField label="Height">
+          <InputText 
+            :modelValue="block.style?.height || ''" 
+            @update:modelValue="v => updateStyle('height', v)"
+            size="small"
+            fluid
+            placeholder="e.g. 200px"
+          />
+        </PropField>
+      </div>
+      
+      <div class="grid grid-cols-2 gap-4 mt-2">
+        <PropField label="Min Height">
+          <InputText 
+            :modelValue="block.style?.minHeight || ''" 
+            @update:modelValue="v => updateStyle('minHeight', v)"
+            size="small"
+            fluid
+            placeholder="e.g. 40px"
+          />
+        </PropField>
+        <PropField label="Overflow">
+          <Select 
+            :modelValue="block.style?.overflow || ''" 
+            :options="overflowOptions"
+            @update:modelValue="v => updateStyle('overflow', v)"
+            size="small"
+            class="w-full"
+            placeholder="Default"
+            showClear
+          />
+        </PropField>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4 mt-2">
+        <PropField label="Padding">
+          <InputText 
+            :modelValue="block.style?.padding || ''" 
+            @update:modelValue="v => updateStyle('padding', v)"
+            size="small"
+            fluid
+            placeholder="e.g. 1rem"
+          />
+        </PropField>
+        <PropField label="Margin">
+          <InputText 
+            :modelValue="block.style?.margin || ''" 
+            @update:modelValue="v => updateStyle('margin', v)"
+            size="small"
+            fluid
+            placeholder="e.g. 0 auto"
+          />
+        </PropField>
+      </div>
+
+      <div class="mt-2">
+        <PropField label="Border">
+          <InputText 
+            :modelValue="block.style?.border || ''" 
+            @update:modelValue="v => updateStyle('border', v)"
+            size="small"
+            fluid
+            placeholder="e.g. 1px solid #ccc"
+          />
+        </PropField>
+      </div>
+
+      <div class="mt-2">
+        <PropField label="Box Shadow">
+          <InputText 
+            :modelValue="block.style?.boxShadow || ''" 
+            @update:modelValue="v => updateStyle('boxShadow', v)"
+            size="small"
+            fluid
+            placeholder="e.g. 0 2px 4px rgba(0,0,0,0.1)"
+          />
+        </PropField>
+      </div>
+    </GmPropSection>
+
+    <!-- TYPOGRAPHY SECTION -->
+    <GmPropSection label="Typography & Colors" :default-open="false">
     
     <PropField label="Text Color">
       <div class="flex items-center gap-3">
-        <ColorPicker 
-          :modelValue="block.style?.color?.replace('#', '') || ''" 
-          @change="e => handleColorChange('color', e)" 
-        />
+        <button 
+          v-if="!block.style?.color" 
+          @click="updateStyle('color', '#000000')" 
+          class="w-6 h-6 rounded border border-dashed border-slate-500 bg-transparent-checker shrink-0 hover:border-slate-400 transition-colors"
+          title="Pick Color"
+        ></button>
+        <div v-else class="flex items-center gap-1">
+          <ColorPicker 
+            :modelValue="block.style.color.replace('#', '')" 
+            @change="e => handleColorChange('color', e)" 
+          />
+          <button @click="updateStyle('color', undefined)" class="text-slate-500 hover:text-red-400 w-5 h-5 flex items-center justify-center transition-colors">
+            <i class="pi pi-times text-[10px]" />
+          </button>
+        </div>
         <InputText 
           :modelValue="block.style?.color || ''" 
           @update:modelValue="v => updateStyle('color', v)"
@@ -48,10 +153,21 @@ const fontWeightOptions = ['normal', 'bold', '100', '200', '300', '400', '500', 
 
     <PropField label="Background Color">
       <div class="flex items-center gap-3">
-        <ColorPicker 
-          :modelValue="block.style?.backgroundColor?.replace('#', '') || ''" 
-          @change="e => handleColorChange('backgroundColor', e)" 
-        />
+        <button 
+          v-if="!block.style?.backgroundColor" 
+          @click="updateStyle('backgroundColor', '#ffffff')" 
+          class="w-6 h-6 rounded border border-dashed border-slate-500 bg-transparent-checker shrink-0 hover:border-slate-400 transition-colors"
+          title="Pick Color"
+        ></button>
+        <div v-else class="flex items-center gap-1">
+          <ColorPicker 
+            :modelValue="block.style.backgroundColor.replace('#', '')" 
+            @change="e => handleColorChange('backgroundColor', e)" 
+          />
+          <button @click="updateStyle('backgroundColor', undefined)" class="text-slate-500 hover:text-red-400 w-5 h-5 flex items-center justify-center transition-colors">
+            <i class="pi pi-times text-[10px]" />
+          </button>
+        </div>
         <InputText 
           :modelValue="block.style?.backgroundColor || ''" 
           @update:modelValue="v => updateStyle('backgroundColor', v)"
@@ -61,28 +177,6 @@ const fontWeightOptions = ['normal', 'bold', '100', '200', '300', '400', '500', 
         />
       </div>
     </PropField>
-
-    <div class="grid grid-cols-2 gap-4 mt-2">
-      <PropField label="Padding">
-        <InputText 
-          :modelValue="block.style?.padding || ''" 
-          @update:modelValue="v => updateStyle('padding', v)"
-          size="small"
-          fluid
-          placeholder="e.g. 1rem"
-        />
-      </PropField>
-      <PropField label="Margin">
-        <InputText 
-          :modelValue="block.style?.margin || ''" 
-          @update:modelValue="v => updateStyle('margin', v)"
-          size="small"
-          fluid
-          placeholder="e.g. 0 auto"
-        />
-      </PropField>
-    </div>
-
     <div class="grid grid-cols-2 gap-4 mt-2">
       <PropField label="Font Size">
         <InputText 
@@ -149,5 +243,6 @@ const fontWeightOptions = ['normal', 'bold', '100', '200', '300', '400', '500', 
       </PropField>
     </div>
 
-  </GmPropSection>
+    </GmPropSection>
+  </div>
 </template>

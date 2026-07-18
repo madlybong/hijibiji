@@ -46,6 +46,10 @@
   --block-font-weight:   inherit;
   --block-font-family:   var(--doc-body-font, var(--font-inter));
   --block-text-align:    left;
+  --block-font-style:       normal;
+  --block-text-decoration:  none;
+  --block-text-transform:   none;
+  --block-line-height:      inherit;
   --block-border-radius: 0;
   --block-opacity:       1;
 }
@@ -122,4 +126,13 @@
     pointer-events: none;
     height: 0;
   }
+}
+
+.bg-transparent-checker {
+  background-image: linear-gradient(45deg, #334155 25%, transparent 25%),
+    linear-gradient(-45deg, #334155 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #334155 75%),
+    linear-gradient(-45deg, transparent 75%, #334155 75%);
+  background-size: 8px 8px;
+  background-position: 0 0, 0 4px, 4px -4px, -4px 0px;
 }

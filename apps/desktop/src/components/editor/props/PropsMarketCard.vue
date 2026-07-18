@@ -1,4 +1,8 @@
 <script setup lang="ts">
+import InputText from 'primevue/inputtext';
+import SelectButton from 'primevue/selectbutton';
+import Select from 'primevue/select';
+
 const props = defineProps<{
   data: any;
 }>();
@@ -7,75 +11,80 @@ const emit = defineEmits(['update']);
 const updateField = (field: string, value: any) => {
   emit('update', { [field]: value });
 };
+
+const trendOptions = [
+  { label: 'None', value: '' },
+  { label: 'Up', value: 'up' },
+  { label: 'Down', value: 'down' },
+];
+
+const borderOptions = [
+  { label: 'None', value: 'none' },
+  { label: 'Green (Bullish)', value: 'green' },
+  { label: 'Red (Bearish)', value: 'red' },
+];
 </script>
 
 <template>
   <div class="flex flex-col gap-4 p-4">
     <div class="flex flex-col gap-1">
       <label class="text-[10px] font-bold text-gray-500 uppercase">Label</label>
-      <input 
-        :value="data.label" 
-        @input="e => updateField('label', (e.target as HTMLInputElement).value)"
-        type="text" 
-        class="bg-[#2A2A2A] border border-[#404040] rounded px-2 py-1.5 text-xs text-white focus:outline-none focus:border-gm-gold" 
+      <InputText 
+        :modelValue="data.label" 
+        @update:modelValue="v => updateField('label', v)"
+        size="small" 
       />
     </div>
 
     <div class="flex flex-col gap-1">
       <label class="text-[10px] font-bold text-gray-500 uppercase">Value (e.g., 22,331)</label>
-      <input 
-        :value="data.value" 
-        @input="e => updateField('value', (e.target as HTMLInputElement).value)"
-        type="text" 
-        class="bg-[#2A2A2A] border border-[#404040] rounded px-2 py-1.5 text-xs text-white focus:outline-none focus:border-gm-gold" 
+      <InputText 
+        :modelValue="data.value" 
+        @update:modelValue="v => updateField('value', v)"
+        size="small" 
       />
     </div>
     
     <div class="flex gap-2">
       <div class="flex flex-col gap-1 flex-1">
         <label class="text-[10px] font-bold text-gray-500 uppercase">Badge Value</label>
-        <input 
-          :value="data.badgeValue" 
-          @input="e => updateField('badgeValue', (e.target as HTMLInputElement).value)"
-          type="text" 
-          class="bg-[#2A2A2A] border border-[#404040] rounded px-2 py-1.5 text-xs text-white focus:outline-none focus:border-gm-gold" 
+        <InputText 
+          :modelValue="data.badgeValue" 
+          @update:modelValue="v => updateField('badgeValue', v)"
+          size="small" 
         />
       </div>
       <div class="flex flex-col gap-1 flex-1">
         <label class="text-[10px] font-bold text-gray-500 uppercase">Trend</label>
-        <select 
-          :value="data.trend || ''"
-          @change="e => updateField('trend', (e.target as HTMLSelectElement).value)"
-          class="bg-[#2A2A2A] border border-[#404040] rounded px-2 py-1.5 text-xs text-white focus:outline-none focus:border-gm-gold"
-        >
-          <option value="">None</option>
-          <option value="up">Up</option>
-          <option value="down">Down</option>
-        </select>
+        <SelectButton 
+          :modelValue="data.trend || ''"
+          @update:modelValue="v => updateField('trend', v)"
+          :options="trendOptions"
+          optionLabel="label"
+          optionValue="value"
+        />
       </div>
     </div>
 
     <div class="flex flex-col gap-1">
       <label class="text-[10px] font-bold text-gray-500 uppercase">Description</label>
-      <input 
-        :value="data.description" 
-        @input="e => updateField('description', (e.target as HTMLInputElement).value)"
-        type="text" 
-        class="bg-[#2A2A2A] border border-[#404040] rounded px-2 py-1.5 text-xs text-white focus:outline-none focus:border-gm-gold" 
+      <InputText 
+        :modelValue="data.description" 
+        @update:modelValue="v => updateField('description', v)"
+        size="small" 
       />
     </div>
 
     <div class="flex flex-col gap-1">
       <label class="text-[10px] font-bold text-gray-500 uppercase">Border Color</label>
-      <select 
-        :value="data.borderColor"
-        @change="e => updateField('borderColor', (e.target as HTMLSelectElement).value)"
-        class="bg-[#2A2A2A] border border-[#404040] rounded px-2 py-1.5 text-xs text-white focus:outline-none focus:border-gm-gold"
-      >
-        <option value="none">None</option>
-        <option value="green">Green (Bullish)</option>
-        <option value="red">Red (Bearish)</option>
-      </select>
+      <Select 
+        :modelValue="data.borderColor"
+        @update:modelValue="v => updateField('borderColor', v)"
+        :options="borderOptions"
+        optionLabel="label"
+        optionValue="value"
+        class="w-full text-xs"
+      />
     </div>
   </div>
 </template>

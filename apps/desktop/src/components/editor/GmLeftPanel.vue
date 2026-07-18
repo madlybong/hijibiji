@@ -1,72 +1,123 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-import { Layers, Component } from 'lucide-vue-next';
+import { Layers, Component, GripVertical } from 'lucide-vue-next';
 import GmBlockPalette from './GmBlockPalette.vue';
 import { useDocumentStore } from '../../store/useDocumentStore';
 import { VueDraggable } from 'vue-draggable-plus';
+import { ref } from 'vue';
+import Button from 'primevue/button';
+import Tag from 'primevue/tag';
+import Menu from 'primevue/menu';
 
-const activeTab = ref<'blocks' | 'pages'>('blocks');
 const docStore = useDocumentStore();
+const activeTab = ref<'blocks' | 'pages'>('blocks');
+const menu = ref();
 
-const addPage = () => {
-  docStore.addPage('blank');
+const pageOptions = ref([
+  { label: 'Add Blank Page', icon: 'pi pi-file', command: () => docStore.addPage('blank') },
+  { label: 'Add Cover Page', icon: 'pi pi-image', command: () => docStore.addPage('cover') },
+  { label: 'Add Back Cover', icon: 'pi pi-image', command: () => docStore.addPage('back-cover') },
+]);
+
+const toggleMenu = (event: Event) => {
+  menu.value.toggle(event);
+};
+
+const getPageSeverity = (type: string) => {
+  if (type === 'cover') return 'info';
+  if (type === 'back-cover') return 'warn';
+  return 'secondary';
 };
 </script>
 
 <template>
-  <div class="flex flex-col h-full bg-[#1E1E1E]">
-    <!-- Tabs -->
-    <div class="flex border-b border-[#333333]">
-      <button 
-        @click="activeTab = 'blocks'"
-        class="flex-1 py-3 text-xs font-semibold flex flex-col items-center gap-1 border-b-2 transition-colors"
-        :class="activeTab === 'blocks' ? 'border-gm-gold text-white' : 'border-transparent text-gray-500 hover:text-gray-300'"
-      >
-        <Component class="w-4 h-4" />
-        Blocks
-      </button>
-      <button 
-        @click="activeTab = 'pages'"
-        class="flex-1 py-3 text-xs font-semibold flex flex-col items-center gap-1 border-b-2 transition-colors"
-        :class="activeTab === 'pages' ? 'border-gm-gold text-white' : 'border-transparent text-gray-500 hover:text-gray-300'"
-      >
-        <Layers class="w-4 h-4" />
-        Pages
-      </button>
+  <div class="flex flex-col h-full bg-surface-900 border-r border-surface-800">
+    <!-- Segmented Control -->
+    <div class="px-4 py-3 border-b border-surface-800">
+      <div class="flex bg-surface-800 rounded-full p-1">
+        <button 
+          class="flex-1 flex justify-center items-center gap-2 py-1.5 text-[10px] font-bold uppercase tracking-widest rounded-full transition-colors" 
+          :class="activeTab === 'blocks' ? 'bg-surface-600 text-surface-0 shadow-sm' : 'text-surface-400 hover:text-surface-200'" 
+          @click="activeTab = 'blocks'"
+        >
+          <Component class="w-3.5 h-3.5" /> Blocks
+        </button>
+        <button 
+          class="flex-1 flex justify-center items-center gap-2 py-1.5 text-[10px] font-bold uppercase tracking-widest rounded-full transition-colors" 
+          :class="activeTab === 'pages' ? 'bg-surface-600 text-surface-0 shadow-sm' : 'text-surface-400 hover:text-surface-200'" 
+          @click="activeTab = 'pages'"
+        >
+          <Layers class="w-3.5 h-3.5" /> Pages
+        </button>
+      </div>
     </div>
 
-    <!-- Content -->
+    <!-- Content Area -->
     <div class="flex-1 overflow-y-auto">
-      <div v-if="activeTab === 'blocks'" class="p-4">
+      <div v-show="activeTab === 'blocks'" class="h-full">
         <GmBlockPalette />
       </div>
 
-      <div v-else-if="activeTab === 'pages'" class="p-4 flex flex-col gap-4">
-        <button @click="addPage" class="w-full bg-[#333] hover:bg-[#444] text-white py-2 rounded text-xs font-semibold transition-colors">
-          + Add New Page
-        </button>
+      <div v-show="activeTab === 'pages'" class="p-4 flex flex-col gap-4 h-full">
+        <!-- Add Page Button -->
+        <div>
+          <Button 
+            label="Add Page" 
+            icon="pi pi-plus" 
+            @click="docStore.addPage('blank')" 
+            size="small" 
+            severity="secondary" 
+            variant="outlined"
+            class="w-full text-xs" 
+          />
+          <Button 
+            icon="pi pi-angle-down" 
+            @click="toggleMenu" 
+            size="small" 
+            severity="secondary" 
+            variant="text"
+            class="absolute right-6 mt-0.5 !w-8 !h-8"
+            aria-haspopup="true" aria-controls="overlay_menu"
+          />
+          <Menu ref="menu" id="overlay_menu" :model="pageOptions" :popup="true" />
+        </div>
         
+        <!-- Page List -->
         <VueDraggable 
           v-if="docStore.document"
           v-model="docStore.document.pages" 
           handle=".drag-handle"
-          class="flex flex-col gap-3"
+          class="flex flex-col gap-2"
         >
           <div 
             v-for="(page, index) in docStore.document.pages" 
             :key="page.id"
-            class="bg-[#2A2A2A] rounded p-2 flex items-center gap-3 border border-[#404040]"
+            class="bg-surface-800 rounded p-2 flex items-center gap-3 border border-surface-700 transition-colors cursor-pointer group"
+            :class="{ 'border-l-2 border-l-primary bg-surface-700': docStore.selectedPageId === page.id }"
+            @click="docStore.selectPage(page.id)"
           >
-            <div class="drag-handle cursor-grab text-gray-500 hover:text-white">
-              <svg width="12" height="24" viewBox="0 0 12 24" fill="currentColor"><path d="M4 6a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm6 0a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm-6 6a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm6 0a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm-6 6a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm6 0a2 2 0 1 1-4 0 2 2 0 0 1 4 0z"/></svg>
+            <!-- Drag Handle -->
+            <div class="drag-handle cursor-grab text-surface-500 hover:text-surface-200 px-1 opacity-0 group-hover:opacity-100 transition-opacity">
+              <GripVertical class="w-3.5 h-3.5" />
             </div>
-            <div class="flex-1 text-xs">
-              <div class="font-bold text-gray-300">Page {{ index + 1 }}</div>
-              <div class="text-[10px] text-gray-500 capitalize">{{ page.type }}</div>
+            
+            <!-- Thumbnail Silhouette -->
+            <div class="rounded-sm aspect-[1/1.41] bg-surface-900 border border-surface-600 w-6 flex items-center justify-center flex-shrink-0">
+              <div class="w-full h-full opacity-20" :style="{ backgroundColor: page.pageStyle?.bgColor || '#0F172A' }" v-if="page.type !== 'blank'"></div>
+              <div class="w-full h-full bg-white opacity-90" v-else></div>
             </div>
-            <button @click="docStore.deletePage(page.id)" class="text-gray-500 hover:text-red-400" title="Delete Page">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-            </button>
+
+            <!-- Title & Badge -->
+            <div class="flex-1 flex flex-col gap-1 min-w-0">
+              <span class="font-bold text-xs truncate" :class="docStore.selectedPageId === page.id ? 'text-surface-0' : 'text-surface-300'">
+                Page {{ index + 1 }}
+              </span>
+              <div class="flex items-center">
+                <Tag :value="page.type" :severity="getPageSeverity(page.type)" class="text-[8px] uppercase tracking-wider !px-1.5 !py-0.5 leading-none" />
+              </div>
+            </div>
+
+            <!-- Delete -->
+            <Button icon="pi pi-trash" variant="text" severity="danger" size="small" rounded class="!w-6 !h-6 !p-0 opacity-0 group-hover:opacity-100 transition-opacity" @click.stop="docStore.deletePage(page.id)" />
           </div>
         </VueDraggable>
       </div>

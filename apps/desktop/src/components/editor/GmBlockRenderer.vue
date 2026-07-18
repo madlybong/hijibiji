@@ -2,6 +2,7 @@
 import { computed } from 'vue';
 import type { GmBlock } from '../../types/document';
 import GmBlockWrapper from './GmBlockWrapper.vue';
+import { VueDraggable } from 'vue-draggable-plus';
 
 // Import all block components
 import GmTextHeading from '../GmTextHeading.vue';
@@ -12,6 +13,9 @@ import GmSectionDivider from '../GmSectionDivider.vue';
 import GmTrendBadge from '../GmTrendBadge.vue';
 import GmInfoCard from '../GmInfoCard.vue';
 import GmDataRow from '../GmDataRow.vue';
+import GmContentGrid from '../GmContentGrid.vue';
+import GmFlexRow from '../GmFlexRow.vue';
+import GmFlexCol from '../GmFlexCol.vue';
 // Container components need recursive rendering, but we can start simple
 
 const props = defineProps<{
@@ -28,12 +32,47 @@ const componentMap: Record<string, any> = {
   'trend-badge': GmTrendBadge,
   'info-card': GmInfoCard,
   'data-row': GmDataRow,
-  // Add section-label, sub-date, content-grid, etc.
+  'content-grid': GmContentGrid,
+  'flex-row': GmFlexRow,
+  'flex-col': GmFlexCol,
+  // Add section-label, sub-date, etc.
 };
 
 const resolvedComponent = computed(() => {
   return componentMap[props.block.type];
 });
+
+const getContainerStyle = (block: GmBlock) => {
+  if (block.type === 'content-grid') {
+    return {
+      display: 'grid',
+      gridTemplateColumns: `repeat(${block.data.cols || 1}, 1fr)`,
+      gap: block.data.gap || '0.75rem',
+      alignItems: block.data.alignItems || 'stretch',
+      justifyItems: block.data.justifyItems || 'stretch',
+    };
+  }
+  if (block.type === 'flex-row') {
+    return {
+      display: 'flex',
+      flexDirection: 'row',
+      flexWrap: block.data.wrap || 'nowrap',
+      gap: block.data.gap || '1rem',
+      justifyContent: block.data.justifyContent || 'flex-start',
+      alignItems: block.data.alignItems || 'stretch',
+    };
+  }
+  if (block.type === 'flex-col') {
+    return {
+      display: 'flex',
+      flexDirection: 'column',
+      gap: block.data.gap || '1rem',
+      justifyContent: block.data.justifyContent || 'flex-start',
+      alignItems: block.data.alignItems || 'stretch',
+    };
+  }
+  return {};
+};
 </script>
 
 <template>
@@ -65,8 +104,6 @@ const resolvedComponent = computed(() => {
       :is="resolvedComponent" 
       v-bind="block.data" 
     >
-      <!-- If the component needs slot content, we can pass it here -->
-      <!-- For example, GmTextHeading uses <slot> instead of text prop. Let's fix that or handle it -->
       <template v-if="block.type === 'heading'">
         {{ block.data.text }}
       </template>
@@ -75,6 +112,25 @@ const resolvedComponent = computed(() => {
       </template>
       <template v-if="block.type === 'info-card'">
         <span v-html="block.data.text"></span>
+      </template>
+      
+      <!-- Container logic -->
+      <template v-if="block.type === 'content-grid' || block.type === 'flex-row' || block.type === 'flex-col'">
+        <VueDraggable 
+          v-model="block.data.blocks"
+          :group="{ name: 'blocks' }"
+          :animation="150"
+          :force-fallback="true"
+          class="min-h-[40px] w-full h-full border border-dashed border-transparent hover:border-gray-400"
+          :style="getContainerStyle(block)"
+        >
+          <GmBlockRenderer 
+            v-for="child in (block.data.blocks || [])" 
+            :key="child.id" 
+            :block="child" 
+            :page-id="pageId" 
+          />
+        </VueDraggable>
       </template>
     </component>
     

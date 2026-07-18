@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import SelectButton from 'primevue/selectbutton';
+import InputText from 'primevue/inputtext';
+import InputText from 'primevue/inputtext';
 
 const props = defineProps<{ data: any }>();
 const emit = defineEmits(['update']);
@@ -9,9 +11,23 @@ const updateField = (field: string, value: any) => {
 };
 
 const colOptions = [
-  { label: '2 Columns', value: 2 },
-  { label: '3 Columns', value: 3 },
-  { label: '4 Columns', value: 4 },
+  { label: '2', value: 2 },
+  { label: '3', value: 3 },
+  { label: '4', value: 4 },
+];
+
+const alignOptions = [
+  { label: 'Start', value: 'start' },
+  { label: 'Center', value: 'center' },
+  { label: 'End', value: 'end' },
+  { label: 'Stretch', value: 'stretch' },
+];
+
+const justifyOptions = [
+  { label: 'Start', value: 'start' },
+  { label: 'Center', value: 'center' },
+  { label: 'End', value: 'end' },
+  { label: 'Stretch', value: 'stretch' },
 ];
 </script>
 

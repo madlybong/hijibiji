@@ -19,8 +19,8 @@ const defaultMarginBottom = computed(() => {
 
 <template>
   <component :is="Tag" :style="{
-    color:        'var(--block-color, var(--color-gm-accent))',
-    fontFamily:   'var(--block-font-family, var(--font-montserrat))',
+    color:        'var(--block-color, var(--doc-accent, var(--color-gm-accent)))',
+    fontFamily:   'var(--block-font-family, var(--doc-heading-font, var(--font-montserrat)))',
     fontSize:     `var(--block-font-size, ${defaultSize})`,
     fontWeight:   `var(--block-font-weight, ${defaultWeight})`,
     textAlign:    'var(--block-text-align, left)',

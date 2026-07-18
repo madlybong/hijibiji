@@ -1,46 +1,62 @@
 <script setup lang="ts">
+import { ref } from 'vue';
 import { VueDraggable } from 'vue-draggable-plus';
 import { Type, LayoutGrid, FileText, Activity, TrendingUp, Maximize2 } from 'lucide-vue-next';
-import type { BlockType } from '../../types/document';
+import type { BlockType, GmBlock } from '../../types/document';
 
-const createTemplate = (type: BlockType, data: any) => ({
-  id: crypto.randomUUID(), // Temporarily use an ID, will be replaced on drop
+const createTemplate = (type: BlockType, data: any): GmBlock => ({
+  id: crypto.randomUUID(),
   type,
   data
 });
 
-// Define available blocks
+const blockMeta: Record<string, { label: string; icon: any }> = {
+  'heading': { label: 'Heading', icon: Type },
+  'paragraph': { label: 'Paragraph', icon: FileText },
+  'section-label': { label: 'Section Label', icon: Type },
+  'highlight-text': { label: 'Highlight Text', icon: Type },
+  'text-list': { label: 'Text List', icon: FileText },
+  'market-card': { label: 'Market Card', icon: Activity },
+  'stock-pick': { label: 'Stock Pick', icon: TrendingUp },
+  'info-card': { label: 'Info Card', icon: FileText },
+  'data-row': { label: 'Data Row', icon: Activity },
+  'trend-badge': { label: 'Trend Badge', icon: TrendingUp },
+  'content-grid': { label: 'Grid', icon: LayoutGrid },
+  'section-divider': { label: 'Divider', icon: Maximize2 },
+  'spacer': { label: 'Spacer', icon: Maximize2 },
+};
+
 const typographyBlocks = [
-  { label: 'Heading', icon: Type, template: createTemplate('heading', { level: 2, text: 'New Heading' }) },
-  { label: 'Paragraph', icon: FileText, template: createTemplate('paragraph', { html: 'Enter text here...' }) },
-  { label: 'Section Label', icon: Type, template: createTemplate('section-label', { text: 'SECTION LABEL' }) },
-  { label: 'Highlight Text', icon: Type, template: createTemplate('highlight-text', { text: 'Highlight Text' }) },
-  { label: 'Text List', icon: FileText, template: createTemplate('text-list', { ordered: false, items: ['Item 1', 'Item 2'] }) },
+  createTemplate('heading', { level: 2, text: 'New Heading' }),
+  createTemplate('paragraph', { html: 'Enter text here...' }),
+  createTemplate('section-label', { text: 'SECTION LABEL' }),
+  createTemplate('highlight-text', { text: 'Highlight Text' }),
+  createTemplate('text-list', { ordered: false, items: ['Item 1', 'Item 2'] }),
 ];
 
 const dataBlocks = [
-  { label: 'Market Card', icon: Activity, template: createTemplate('market-card', { label: 'LABEL', value: '1,000', borderColor: 'none' }) },
-  { label: 'Stock Pick', icon: TrendingUp, template: createTemplate('stock-pick', { stockName: 'STOCK', stockDesc: 'Description', cmp: '-', target: '-', addOnDip: '-', exit: '-', upside: '-', upsideTime: '-' }) },
-  { label: 'Info Card', icon: FileText, template: createTemplate('info-card', { title: 'Title', text: 'Info text...' }) },
-  { label: 'Data Row', icon: Activity, template: createTemplate('data-row', { label: 'Label', value: 'Value' }) },
-  { label: 'Trend Badge', icon: TrendingUp, template: createTemplate('trend-badge', { value: '0%', trend: 'up' }) },
+  createTemplate('market-card', { label: 'LABEL', value: '1,000', borderColor: 'none' }),
+  createTemplate('stock-pick', { stockName: 'STOCK', stockDesc: 'Description', cmp: '-', target: '-', addOnDip: '-', exit: '-', upside: '-', upsideTime: '-' }),
+  createTemplate('info-card', { title: 'Title', text: 'Info text...' }),
+  createTemplate('data-row', { label: 'Label', value: 'Value' }),
+  createTemplate('trend-badge', { value: '0%', trend: 'up' }),
 ];
 
 const layoutBlocks = [
-  { label: '2-Col Grid', icon: LayoutGrid, template: createTemplate('content-grid', { cols: 2, blocks: [] }) },
-  { label: '4-Col Grid', icon: LayoutGrid, template: createTemplate('content-grid', { cols: 4, blocks: [] }) },
-  { label: 'Divider', icon: Maximize2, template: createTemplate('section-divider', { label: 'DIVIDER' }) },
-  { label: 'Spacer', icon: Maximize2, template: createTemplate('spacer', { height: 20 }) },
+  createTemplate('content-grid', { cols: 2, blocks: [] }),
+  createTemplate('content-grid', { cols: 4, blocks: [] }),
+  createTemplate('section-divider', { label: 'DIVIDER' }),
+  createTemplate('spacer', { height: 20 }),
 ];
 
-// Combine all for the clone function
-const cloneBlock = (blockTemplate: any) => {
+const cloneBlock = (block: GmBlock): GmBlock => {
   return {
-    ...blockTemplate.template,
-    id: crypto.randomUUID()
+    ...block,
+    id: crypto.randomUUID(),
+    data: JSON.parse(JSON.stringify(block.data)), // Deep copy data
+    children: block.children ? [] : undefined
   };
 };
-
 </script>
 
 <template>
@@ -53,11 +69,12 @@ const cloneBlock = (blockTemplate: any) => {
         :group="{ name: 'blocks', pull: 'clone', put: false }"
         :clone="cloneBlock"
         :sort="false"
+        :force-fallback="true"
         class="grid grid-cols-2 gap-2"
       >
-        <div v-for="block in typographyBlocks" :key="block.label" class="bg-[#2A2A2A] border border-[#404040] rounded p-2 flex flex-col items-center justify-center gap-2 cursor-grab hover:bg-[#333] hover:border-gm-gold transition-colors">
-          <component :is="block.icon" class="w-5 h-5 text-gray-400" />
-          <span class="text-[10px] font-semibold text-gray-300 text-center leading-tight">{{ block.label }}</span>
+        <div v-for="block in typographyBlocks" :key="block.id" class="bg-[#2A2A2A] border border-[#404040] rounded p-2 flex flex-col items-center justify-center gap-2 cursor-grab hover:bg-[#333] hover:border-gm-gold transition-colors">
+          <component :is="blockMeta[block.type].icon" class="w-5 h-5 text-gray-400" />
+          <span class="text-[10px] font-semibold text-gray-300 text-center leading-tight">{{ blockMeta[block.type].label }}</span>
         </div>
       </VueDraggable>
     </div>
@@ -69,11 +86,12 @@ const cloneBlock = (blockTemplate: any) => {
         :group="{ name: 'blocks', pull: 'clone', put: false }"
         :clone="cloneBlock"
         :sort="false"
+        :force-fallback="true"
         class="grid grid-cols-2 gap-2"
       >
-        <div v-for="block in dataBlocks" :key="block.label" class="bg-[#2A2A2A] border border-[#404040] rounded p-2 flex flex-col items-center justify-center gap-2 cursor-grab hover:bg-[#333] hover:border-gm-gold transition-colors">
-          <component :is="block.icon" class="w-5 h-5 text-gray-400" />
-          <span class="text-[10px] font-semibold text-gray-300 text-center leading-tight">{{ block.label }}</span>
+        <div v-for="block in dataBlocks" :key="block.id" class="bg-[#2A2A2A] border border-[#404040] rounded p-2 flex flex-col items-center justify-center gap-2 cursor-grab hover:bg-[#333] hover:border-gm-gold transition-colors">
+          <component :is="blockMeta[block.type].icon" class="w-5 h-5 text-gray-400" />
+          <span class="text-[10px] font-semibold text-gray-300 text-center leading-tight">{{ blockMeta[block.type].label }}</span>
         </div>
       </VueDraggable>
     </div>
@@ -85,11 +103,12 @@ const cloneBlock = (blockTemplate: any) => {
         :group="{ name: 'blocks', pull: 'clone', put: false }"
         :clone="cloneBlock"
         :sort="false"
+        :force-fallback="true"
         class="grid grid-cols-2 gap-2"
       >
-        <div v-for="block in layoutBlocks" :key="block.label" class="bg-[#2A2A2A] border border-[#404040] rounded p-2 flex flex-col items-center justify-center gap-2 cursor-grab hover:bg-[#333] hover:border-gm-gold transition-colors">
-          <component :is="block.icon" class="w-5 h-5 text-gray-400" />
-          <span class="text-[10px] font-semibold text-gray-300 text-center leading-tight">{{ block.label }}</span>
+        <div v-for="block in layoutBlocks" :key="block.id" class="bg-[#2A2A2A] border border-[#404040] rounded p-2 flex flex-col items-center justify-center gap-2 cursor-grab hover:bg-[#333] hover:border-gm-gold transition-colors">
+          <component :is="blockMeta[block.type].icon" class="w-5 h-5 text-gray-400" />
+          <span class="text-[10px] font-semibold text-gray-300 text-center leading-tight">{{ blockMeta[block.type].label }}</span>
         </div>
       </VueDraggable>
     </div>

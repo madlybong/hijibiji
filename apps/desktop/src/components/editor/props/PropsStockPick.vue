@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import InputText from 'primevue/inputtext';
+import Textarea from 'primevue/textarea';
+
 const props = defineProps<{
   data: any;
 }>();
@@ -13,38 +16,38 @@ const updateField = (field: string, value: any) => {
   <div class="flex flex-col gap-4 p-4">
     <div class="flex flex-col gap-1">
       <label class="text-[10px] font-bold text-gray-500 uppercase">Stock Name</label>
-      <input :value="data.stockName" @input="e => updateField('stockName', (e.target as HTMLInputElement).value)" type="text" class="bg-[#2A2A2A] border border-[#404040] rounded px-2 py-1.5 text-xs text-white" />
+      <InputText :modelValue="data.stockName" @update:modelValue="v => updateField('stockName', v)" size="small" />
     </div>
     
     <div class="flex flex-col gap-1">
       <label class="text-[10px] font-bold text-gray-500 uppercase">Description</label>
-      <textarea :value="data.stockDesc" @input="e => updateField('stockDesc', (e.target as HTMLTextAreaElement).value)" class="bg-[#2A2A2A] border border-[#404040] rounded px-2 py-1.5 text-xs text-white min-h-[60px]"></textarea>
+      <Textarea :modelValue="data.stockDesc" @update:modelValue="v => updateField('stockDesc', v)" rows="3" />
     </div>
 
     <div class="grid grid-cols-2 gap-2">
       <div class="flex flex-col gap-1">
         <label class="text-[10px] font-bold text-gray-500 uppercase">CMP</label>
-        <input :value="data.cmp" @input="e => updateField('cmp', (e.target as HTMLInputElement).value)" type="text" class="bg-[#2A2A2A] border border-[#404040] rounded px-2 py-1.5 text-xs text-white" />
+        <InputText :modelValue="data.cmp" @update:modelValue="v => updateField('cmp', v)" size="small" />
       </div>
       <div class="flex flex-col gap-1">
         <label class="text-[10px] font-bold text-gray-500 uppercase">Target</label>
-        <input :value="data.target" @input="e => updateField('target', (e.target as HTMLInputElement).value)" type="text" class="bg-[#2A2A2A] border border-[#404040] rounded px-2 py-1.5 text-xs text-white" />
+        <InputText :modelValue="data.target" @update:modelValue="v => updateField('target', v)" size="small" />
       </div>
       <div class="flex flex-col gap-1">
         <label class="text-[10px] font-bold text-gray-500 uppercase">Add On Dip</label>
-        <input :value="data.addOnDip" @input="e => updateField('addOnDip', (e.target as HTMLInputElement).value)" type="text" class="bg-[#2A2A2A] border border-[#404040] rounded px-2 py-1.5 text-xs text-white" />
+        <InputText :modelValue="data.addOnDip" @update:modelValue="v => updateField('addOnDip', v)" size="small" />
       </div>
       <div class="flex flex-col gap-1">
         <label class="text-[10px] font-bold text-gray-500 uppercase">Exit</label>
-        <input :value="data.exit" @input="e => updateField('exit', (e.target as HTMLInputElement).value)" type="text" class="bg-[#2A2A2A] border border-[#404040] rounded px-2 py-1.5 text-xs text-white" />
+        <InputText :modelValue="data.exit" @update:modelValue="v => updateField('exit', v)" size="small" />
       </div>
       <div class="flex flex-col gap-1">
         <label class="text-[10px] font-bold text-gray-500 uppercase">Upside %</label>
-        <input :value="data.upside" @input="e => updateField('upside', (e.target as HTMLInputElement).value)" type="text" class="bg-[#2A2A2A] border border-[#404040] rounded px-2 py-1.5 text-xs text-white" />
+        <InputText :modelValue="data.upside" @update:modelValue="v => updateField('upside', v)" size="small" />
       </div>
       <div class="flex flex-col gap-1">
         <label class="text-[10px] font-bold text-gray-500 uppercase">Upside Time</label>
-        <input :value="data.upsideTime" @input="e => updateField('upsideTime', (e.target as HTMLInputElement).value)" type="text" class="bg-[#2A2A2A] border border-[#404040] rounded px-2 py-1.5 text-xs text-white" />
+        <InputText :modelValue="data.upsideTime" @update:modelValue="v => updateField('upsideTime', v)" size="small" />
       </div>
     </div>
   </div>

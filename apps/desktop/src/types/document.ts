@@ -6,9 +6,7 @@
 export type BlockType =
   | 'heading'
   | 'paragraph'
-  | 'section-label'
-  | 'sub-date'
-  | 'highlight-text'
+  | 'datetime'
   | 'section-divider'
   | 'text-list'
   | 'data-row'
@@ -21,7 +19,8 @@ export type BlockType =
   | 'data-table'
   | 'trend-badge'
   | 'spacer'
-  | 'raw-html';
+  | 'raw-html'
+  | 'page-number';
 
 // ============================================================
 //  BLOCK STYLE — flat object that maps to CSS custom properties
@@ -37,8 +36,21 @@ export interface BlockStyle {
   fontWeight?: string;          // → --block-font-weight
   fontFamily?: string;          // → --block-font-family
   textAlign?: 'left' | 'center' | 'right' | 'justify'; // → --block-text-align
+  fontStyle?: 'normal' | 'italic';                     // → --block-font-style
+  textDecoration?: 'none' | 'underline' | 'line-through'; // → --block-text-decoration
+  textTransform?: 'none' | 'uppercase' | 'capitalize' | 'lowercase'; // → --block-text-transform
+  lineHeight?: string;          // → --block-line-height
   borderRadius?: string;        // → --block-border-radius
   opacity?: string;             // → --block-opacity
+  width?: string;               // → --block-width
+  height?: string;              // → --block-height
+  minHeight?: string;           // → --block-min-height
+  border?: string;              // → --block-border
+  borderColor?: string;         // → --block-border-color
+  borderWidth?: string;         // → --block-border-width
+  borderStyle?: string;         // → --block-border-style
+  boxShadow?: string;           // → --block-box-shadow
+  overflow?: string;            // → --block-overflow
 }
 
 // ============================================================
@@ -50,6 +62,8 @@ export interface GmBlock {
   data: Record<string, any>;   // Block-type-specific content data
   style?: BlockStyle;          // User overrides applied via CSS vars
   children?: GmBlock[];        // For container blocks (content-grid, etc.)
+  isHidden?: boolean;          // Is the block hidden from preview/export?
+  isLocked?: boolean;          // Is the block locked from editing?
 }
 
 // ============================================================
@@ -77,9 +91,8 @@ export interface GmPage {
   type: PageType;
   label: string;              // User-given page name (e.g., "Cover", "Page 1")
   blocks: GmBlock[];
-  headerBlocks?: GmBlock[];   // Blocks rendered in the designable header zone
-  footerBlocks?: GmBlock[];   // Blocks rendered in the designable footer zone
   showHeader?: boolean;       // Default: true for 'blank', false for 'cover'/'back-cover'
+  showFooter?: boolean;       // Default: true for 'blank', false for 'cover'/'back-cover'
   showFooter?: boolean;       // Default: true for 'blank', false for 'cover'/'back-cover'
   pageStyle?: PageStyle;
 }
@@ -115,5 +128,7 @@ export interface GmDocument {
   createdAt: string;           // ISO 8601 timestamp
   updatedAt: string;           // ISO 8601 timestamp
   brandSettings: GlobalBrandSettings;
+  headerBlocks: GmBlock[];
+  footerBlocks: GmBlock[];
   pages: GmPage[];
 }

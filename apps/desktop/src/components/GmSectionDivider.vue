@@ -3,7 +3,7 @@ defineProps<{ label: string }>();
 </script>
 
 <template>
-  <div :style="{ display: 'flex', alignItems: 'center', margin: '0.5rem 0' }">
+  <div class="w-full h-full" :style="{ display: 'flex', alignItems: 'center' }">
     <span :style="{
       fontFamily:    'var(--block-font-family, var(--font-montserrat))',
       color:         'var(--block-color, var(--color-gm-text-muted))',

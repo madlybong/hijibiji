@@ -11,12 +11,8 @@ const docStore = useDocumentStore();
 
 const pageSizes: PageSize[] = ['A4', 'Letter', 'A3', 'A5'];
 
-const updateBrandSetting = (field: string, value: string) => {
-  if (docStore.document) {
-    const currentSettings = docStore.document.brandSettings;
-    docStore.document.brandSettings = { ...currentSettings, [field]: value };
-    docStore.isDirty = true;
-  }
+const updateBrandSetting = (field: string, value: any) => {
+  docStore.updateBrandSettings({ [field]: value });
 };
 
 const handleColorChange = (field: string, e: any) => {
@@ -67,7 +63,7 @@ const handleColorChange = (field: string, e: any) => {
           />
           <InputText 
             :modelValue="docStore.document.brandSettings?.primaryColor || '#D4AF37'" 
-            @update:modelValue="v => updateBrandSetting('primaryColor', v || '')"
+            @update:modelValue="v => updateBrandSetting('primaryColor', v)"
             size="small" 
             class="flex-1 font-mono text-xs"
           />
@@ -82,7 +78,7 @@ const handleColorChange = (field: string, e: any) => {
           />
           <InputText 
             :modelValue="docStore.document.brandSettings?.accentColor || '#0F172A'" 
-            @update:modelValue="v => updateBrandSetting('accentColor', v || '')"
+            @update:modelValue="v => updateBrandSetting('accentColor', v)"
             size="small" 
             class="flex-1 font-mono text-xs"
           />
@@ -97,7 +93,7 @@ const handleColorChange = (field: string, e: any) => {
           />
           <InputText 
             :modelValue="docStore.document.brandSettings?.textColor || '#1E293B'" 
-            @update:modelValue="v => updateBrandSetting('textColor', v || '')"
+            @update:modelValue="v => updateBrandSetting('textColor', v)"
             size="small" 
             class="flex-1 font-mono text-xs"
           />
@@ -112,7 +108,7 @@ const handleColorChange = (field: string, e: any) => {
           />
           <InputText 
             :modelValue="docStore.document.brandSettings?.bgColor || '#FFFFFF'" 
-            @update:modelValue="v => updateBrandSetting('bgColor', v || '')"
+            @update:modelValue="v => updateBrandSetting('bgColor', v)"
             size="small" 
             class="flex-1 font-mono text-xs"
           />
@@ -122,7 +118,7 @@ const handleColorChange = (field: string, e: any) => {
       <PropField label="Heading Font">
         <InputText 
           :modelValue="docStore.document.brandSettings?.headingFont || 'Montserrat, sans-serif'" 
-          @update:modelValue="v => updateBrandSetting('headingFont', v || '')"
+          @update:modelValue="v => updateBrandSetting('headingFont', v)"
           size="small"
           fluid
         />
@@ -131,7 +127,7 @@ const handleColorChange = (field: string, e: any) => {
       <PropField label="Body Font">
         <InputText 
           :modelValue="docStore.document.brandSettings?.bodyFont || 'Inter, sans-serif'" 
-          @update:modelValue="v => updateBrandSetting('bodyFont', v || '')"
+          @update:modelValue="v => updateBrandSetting('bodyFont', v)"
           size="small"
           fluid
         />
