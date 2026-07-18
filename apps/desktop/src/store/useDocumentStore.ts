@@ -118,6 +118,30 @@ export const useDocumentStore = defineStore('document', () => {
     }
   };
 
+  const toggleBlockHidden = (blockId: string) => {
+    if (!document.value) return;
+    for (const page of document.value.pages) {
+      const block = page.blocks.find(b => b.id === blockId);
+      if (block) {
+        block.isHidden = !block.isHidden;
+        isDirty.value = true;
+        return;
+      }
+    }
+  };
+
+  const toggleBlockLocked = (blockId: string) => {
+    if (!document.value) return;
+    for (const page of document.value.pages) {
+      const block = page.blocks.find(b => b.id === blockId);
+      if (block) {
+        block.isLocked = !block.isLocked;
+        isDirty.value = true;
+        return;
+      }
+    }
+  };
+
   const updateBrandSettings = (settings: Partial<GlobalBrandSettings>) => {
     if (!document.value) return;
     document.value.brandSettings = {
