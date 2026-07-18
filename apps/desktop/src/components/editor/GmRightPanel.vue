@@ -6,7 +6,6 @@ import GmBlockProperties from './GmBlockProperties.vue';
 import PropsPage from './props/PropsPage.vue';
 import GmLayersPanel from './GmLayersPanel.vue';
 import Button from 'primevue/button';
-import { Settings, FileCode2, Layers } from 'lucide-vue-next';
 import { ref } from 'vue';
 
 const docStore = useDocumentStore();
@@ -25,9 +24,9 @@ const activeTab = ref<'properties' | 'layers'>('properties');
 </script>
 
 <template>
-  <div class="h-full flex flex-col bg-surface-900 border-l border-surface-800">
+  <div class="h-full flex flex-col bg-slate-900 border-l border-white/5">
     <!-- Header -->
-    <div class="flex items-center justify-between px-4 h-11 border-b border-surface-800 shrink-0">
+    <div class="flex items-center justify-between px-4 h-11 border-b border-white/5 shrink-0">
       <div class="flex items-center gap-2 w-48">
         <div class="flex bg-slate-800 rounded-full p-1 w-full">
           <button 
@@ -66,3 +65,4 @@ const activeTab = ref<'properties' | 'layers'>('properties');
     </div>
   </div>
 </template>
+

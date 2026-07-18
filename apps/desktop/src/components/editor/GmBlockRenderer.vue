@@ -3,10 +3,14 @@ import { computed } from 'vue';
 import type { GmBlock } from '../../types/document';
 import GmBlockWrapper from './GmBlockWrapper.vue';
 import { VueDraggable } from 'vue-draggable-plus';
+import { useAppStore } from '../../store/useAppStore';
+import { useDocumentStore } from '../../store/useDocumentStore';
 
 // Import all block components
 import GmTextHeading from '../GmTextHeading.vue';
 import GmTextParagraph from '../GmTextParagraph.vue';
+import GmTextList from '../GmTextList.vue';
+import GmDateTime from '../GmDateTime.vue';
 import GmMarketCard from '../GmMarketCard.vue';
 import GmStockPickBlock from '../GmStockPickBlock.vue';
 import GmSectionDivider from '../GmSectionDivider.vue';
@@ -16,16 +20,23 @@ import GmDataRow from '../GmDataRow.vue';
 import GmContentGrid from '../GmContentGrid.vue';
 import GmFlexRow from '../GmFlexRow.vue';
 import GmFlexCol from '../GmFlexCol.vue';
-// Container components need recursive rendering, but we can start simple
+import GmSpacer from '../GmSpacer.vue';
+import GmRawHtml from '../GmRawHtml.vue';
+import GmPageNumber from '../GmPageNumber.vue';
 
 const props = defineProps<{
   block: GmBlock;
   pageId: string;
 }>();
 
+const appStore = useAppStore();
+const docStore = useDocumentStore();
+
 const componentMap: Record<string, any> = {
   'heading': GmTextHeading,
   'paragraph': GmTextParagraph,
+  'text-list': GmTextList,
+  'datetime': GmDateTime,
   'market-card': GmMarketCard,
   'stock-pick': GmStockPickBlock,
   'section-divider': GmSectionDivider,
@@ -35,7 +46,9 @@ const componentMap: Record<string, any> = {
   'content-grid': GmContentGrid,
   'flex-row': GmFlexRow,
   'flex-col': GmFlexCol,
-  // Add section-label, sub-date, etc.
+  'spacer': GmSpacer,
+  'raw-html': GmRawHtml,
+  'page-number': GmPageNumber,
 };
 
 const resolvedComponent = computed(() => {
@@ -77,32 +90,23 @@ const getContainerStyle = (block: GmBlock) => {
 
 <template>
   <GmBlockWrapper :block="block" :page-id="pageId">
-    <!-- Simple fallback if component not found or simple div wrappers -->
-    <template v-if="block.type === 'section-label'">
-      <div class="gm-text-section-label">{{ block.data.text }}</div>
-    </template>
-    
-    <template v-else-if="block.type === 'sub-date'">
-      <div class="gm-text-sub-date font-montserrat tracking-widest text-[9px] uppercase font-bold text-gm-text-muted mb-4">{{ block.data.text }}</div>
-    </template>
-    
-    <template v-else-if="block.type === 'highlight-text'">
-      <span class="gm-text-highlight">{{ block.data.text }}</span>
-    </template>
-
-    <template v-else-if="block.type === 'spacer'">
-      <div :style="{ height: `${block.data.height}px` }"></div>
-    </template>
-    
-    <template v-else-if="block.type === 'raw-html'">
-      <div v-html="block.data.html"></div>
-    </template>
-
-    <!-- Dynamically resolved components -->
     <component 
-      v-else-if="resolvedComponent" 
+      v-if="resolvedComponent" 
       :is="resolvedComponent" 
-      v-bind="block.data" 
+      v-bind="{
+        ...block.data,
+        ...(block.type === 'paragraph' ? { 
+          html: block.data.html, 
+          blockId: block.id,
+          isEditing: docStore.selectedBlockId === block.id,
+          isPreview: appStore.editorMode === 'preview'
+        } : {}),
+        ...(block.type === 'heading' ? {
+          blockId: block.id,
+          isEditing: docStore.selectedBlockId === block.id,
+          isPreview: appStore.editorMode === 'preview'
+        } : {})
+      }"
     >
       <template v-if="block.type === 'heading'">
         {{ block.data.text }}

@@ -18,18 +18,32 @@ const isSelected = computed(() => docStore.selectedBlockId === props.block.id);
 const isPreview = computed(() => appStore.editorMode === 'preview');
 
 const cssVars = computed(() => {
-  const s = props.block.style || {};
+  const s = props.block.style;
+  if (!s) return {};
   return {
     ...(s.color && { '--block-color': s.color }),
     ...(s.backgroundColor && { '--block-bg-color': s.backgroundColor }),
-    ...(s.padding && { padding: s.padding }),
-    ...(s.margin && { margin: s.margin }),
+    ...(s.padding && { '--block-padding': s.padding }),
+    ...(s.margin && { '--block-margin': s.margin }),
     ...(s.fontSize && { '--block-font-size': s.fontSize }),
     ...(s.fontWeight && { '--block-font-weight': s.fontWeight }),
     ...(s.fontFamily && { '--block-font-family': s.fontFamily }),
     ...(s.textAlign && { '--block-text-align': s.textAlign }),
+    ...(s.fontStyle && { '--block-font-style': s.fontStyle }),
+    ...(s.textDecoration && { '--block-text-decoration': s.textDecoration }),
+    ...(s.textTransform && { '--block-text-transform': s.textTransform }),
+    ...(s.lineHeight && { '--block-line-height': s.lineHeight }),
     ...(s.borderRadius && { '--block-border-radius': s.borderRadius }),
     ...(s.opacity && { '--block-opacity': s.opacity }),
+    ...(s.width && { '--block-width': s.width }),
+    ...(s.height && { '--block-height': s.height }),
+    ...(s.minHeight && { '--block-min-height': s.minHeight }),
+    ...(s.border && { '--block-border': s.border }),
+    ...(s.borderColor && { '--block-border-color': s.borderColor }),
+    ...(s.borderWidth && { '--block-border-width': s.borderWidth }),
+    ...(s.borderStyle && { '--block-border-style': s.borderStyle }),
+    ...(s.boxShadow && { '--block-box-shadow': s.boxShadow }),
+    ...(s.overflow && { '--block-overflow': s.overflow }),
   };
 });
 
@@ -53,10 +67,8 @@ const remove = (e: MouseEvent) => {
 
 <template>
   <div 
-    class="relative group"
-    v-show="!(isPreview && block.isHidden)"
+    class="relative group transition-all duration-200"
     :class="[
-      !isPreview ? 'min-h-[20px] transition-all duration-200' : '',
       block.isLocked && !isPreview ? 'pointer-events-none' : '',
       !block.isLocked && !isPreview ? 'cursor-pointer' : '',
       block.isHidden && !isPreview ? 'opacity-30 select-none bg-[repeating-linear-gradient(45deg,transparent,transparent_10px,rgba(0,0,0,0.05)_10px,rgba(0,0,0,0.05)_20px)] pointer-events-none' : '',

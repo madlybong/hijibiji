@@ -38,7 +38,7 @@ const handleDelete = async (id: string) => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-surface-950 p-8 flex flex-col items-center">
+  <div class="min-h-screen bg-slate-950 p-8 flex flex-col items-center">
     <div class="w-full max-w-5xl">
       
       <div class="flex items-center gap-4 mb-12 select-none">
@@ -54,13 +54,13 @@ const handleDelete = async (id: string) => {
         </div>
       </div>
 
-      <div v-if="docs.length === 0" class="flex flex-col items-center justify-center p-16 border border-dashed border-surface-700 rounded-xl bg-surface-900/50">
+      <div v-if="docs.length === 0" class="flex flex-col items-center justify-center p-16 border border-dashed border-slate-700 rounded-xl bg-slate-900/50">
         <FileText class="w-12 h-12 text-slate-500 mb-4" />
         <p class="text-slate-300">No documents found. Create one to get started.</p>
       </div>
 
       <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <Card v-for="doc in docs" :key="doc.id" class="bg-surface-900 border border-surface-700 hover:border-primary/50 transition-colors cursor-pointer" @click="handleOpen(doc.id)">
+        <Card v-for="doc in docs" :key="doc.id" class="bg-slate-900 border border-slate-700 hover:border-yellow-500/40 hover:-translate-y-1 hover:shadow-xl transition-all duration-200 cursor-pointer" @click="handleOpen(doc.id)">
           <template #title>
             <div class="text-base truncate">{{ doc.title || 'Untitled Document' }}</div>
           </template>

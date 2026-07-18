@@ -1,43 +1,35 @@
 <script setup lang="ts">
-import InputText from 'primevue/inputtext';
+import PropField from './PropField.vue';
 import SelectButton from 'primevue/selectbutton';
+import Message from 'primevue/message';
 
-const props = defineProps<{
-  data: any;
-}>();
+const props = defineProps<{ data: any }>();
 const emit = defineEmits(['update']);
 
 const updateField = (field: string, value: any) => {
   emit('update', { [field]: value });
 };
-
-const levelOptions = [
-  { label: 'H1', value: 1 },
-  { label: 'H2', value: 2 },
-  { label: 'H3', value: 3 },
-];
 </script>
 
 <template>
-  <div class="flex flex-col gap-4 p-4">
-    <div class="flex flex-col gap-1">
-      <label class="text-[10px] font-bold text-gray-500 uppercase">Heading Text</label>
-      <InputText 
-        :modelValue="data.text" 
-        @update:modelValue="v => updateField('text', v)"
-        size="small" 
-      />
-    </div>
+  <div class="flex flex-col gap-4">
+    <Message severity="info" :closable="false" size="small" class="text-xs">
+      Click the heading on the canvas to edit text.
+    </Message>
 
-    <div class="flex flex-col gap-1">
-      <label class="text-[10px] font-bold text-gray-500 uppercase">Level</label>
+    <PropField label="Level">
       <SelectButton 
-        :modelValue="data.level"
+        :modelValue="data.level || 2" 
         @update:modelValue="v => updateField('level', v)"
-        :options="levelOptions"
+        :options="[
+          { label: 'H1', value: 1 },
+          { label: 'H2', value: 2 },
+          { label: 'H3', value: 3 }
+        ]"
         optionLabel="label"
         optionValue="value"
+        size="small" 
       />
-    </div>
+    </PropField>
   </div>
 </template>

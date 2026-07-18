@@ -77,7 +77,6 @@ export const createGoldmineTemplate = (): GmDocument => ({
       blocks:       [],
       showHeader:   true,
       showFooter:   true,
-      pageStyle:    { padding: '8mm', bgColor: '#FFFFFF' },
     },
     {
       id:           crypto.randomUUID(),
@@ -87,6 +86,6 @@ export const createGoldmineTemplate = (): GmDocument => ({
       showHeader:   false,
       showFooter:   false,
       pageStyle:    { padding: '0', bgColor: '#0F172A' },
-    },
+    }
   ],
 });

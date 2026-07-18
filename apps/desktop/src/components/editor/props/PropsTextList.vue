@@ -1,9 +1,7 @@
 <script setup lang="ts">
-import InputText from 'primevue/inputtext';
+import { computed } from 'vue';
 import Textarea from 'primevue/textarea';
 import SelectButton from 'primevue/selectbutton';
-import { computed } from 'vue';
-
 const props = defineProps<{ data: any }>();
 const emit = defineEmits(['update']);
 

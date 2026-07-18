@@ -1,27 +1,52 @@
 <script setup lang="ts">
-
 import InputText from 'primevue/inputtext';
 import ColorPicker from 'primevue/colorpicker';
+import SelectButton from 'primevue/selectbutton';
+import Select from 'primevue/select';
 import PropField from './PropField.vue';
 import GmPropSection from './GmPropSection.vue';
 import type { GmBlock } from '../../../types/document';
 import { useDocumentStore } from '../../../store/useDocumentStore';
-import Select from 'primevue/select';
 
-const props = defineProps<{
-  block: GmBlock;
-}>();
-
+const props = defineProps<{ block: GmBlock }>();
 const docStore = useDocumentStore();
 
 const updateStyle = (field: string, value: any) => {
   docStore.updateBlockStyle(props.block.id, { [field]: value });
 };
 
-const handleColorChange = (field: string, e: any) => {
-  const hex = e.value.startsWith('#') ? e.value : '#' + e.value;
-  updateStyle(field, hex);
+const handleColorChange = (prop: string, e: any) => {
+  if (e.value) {
+    updateStyle(prop, '#' + e.value);
+  } else {
+    updateStyle(prop, undefined);
+  }
 };
+
+const fontStyleOptions = [
+  { label: 'Normal', value: 'normal' },
+  { label: 'Italic', value: 'italic' }
+];
+
+const textDecoOptions = [
+  { label: 'None', value: 'none' },
+  { label: 'Underline', value: 'underline' },
+  { label: 'Strike', value: 'line-through' }
+];
+
+const textTransformOptions = [
+  { label: 'Aa', value: 'none' },
+  { label: 'AA', value: 'uppercase' },
+  { label: 'Aa', value: 'capitalize' },
+  { label: 'aa', value: 'lowercase' }
+];
+
+const overflowOptions = [
+  { label: 'Visible', value: 'visible' },
+  { label: 'Hidden', value: 'hidden' },
+  { label: 'Scroll', value: 'scroll' },
+  { label: 'Auto', value: 'auto' },
+];
 
 const textAlignOptions = ['left', 'center', 'right', 'justify'];
 const fontWeightOptions = ['normal', 'bold', '100', '200', '300', '400', '500', '600', '700', '800', '900'];
@@ -71,6 +96,8 @@ const fontWeightOptions = ['normal', 'bold', '100', '200', '300', '400', '500', 
             class="w-full"
             placeholder="Default"
             showClear
+            optionLabel="label"
+            optionValue="value"
           />
         </PropField>
       </div>
@@ -123,125 +150,170 @@ const fontWeightOptions = ['normal', 'bold', '100', '200', '300', '400', '500', 
 
     <!-- TYPOGRAPHY SECTION -->
     <GmPropSection label="Typography & Colors" :default-open="false">
-    
-    <PropField label="Text Color">
-      <div class="flex items-center gap-3">
-        <button 
-          v-if="!block.style?.color" 
-          @click="updateStyle('color', '#000000')" 
-          class="w-6 h-6 rounded border border-dashed border-slate-500 bg-transparent-checker shrink-0 hover:border-slate-400 transition-colors"
-          title="Pick Color"
-        ></button>
-        <div v-else class="flex items-center gap-1">
-          <ColorPicker 
-            :modelValue="block.style.color.replace('#', '')" 
-            @change="e => handleColorChange('color', e)" 
+      <PropField label="Text Color">
+        <div class="flex items-center gap-3">
+          <button 
+            v-if="!block.style?.color" 
+            @click="updateStyle('color', '#000000')" 
+            class="w-6 h-6 rounded border border-dashed border-slate-500 bg-transparent-checker shrink-0 hover:border-slate-400 transition-colors"
+            title="Pick Color"
+          ></button>
+          <div v-else class="flex items-center gap-1">
+            <ColorPicker 
+              :modelValue="block.style.color.replace('#', '')" 
+              @change="e => handleColorChange('color', e)" 
+            />
+            <button @click="updateStyle('color', undefined)" class="text-slate-500 hover:text-red-400 w-5 h-5 flex items-center justify-center transition-colors">
+              <i class="pi pi-times text-[10px]" />
+            </button>
+          </div>
+          <InputText 
+            :modelValue="block.style?.color || ''" 
+            @update:modelValue="v => updateStyle('color', v)"
+            size="small" 
+            class="flex-1 font-mono text-xs"
+            placeholder="Inherit"
           />
-          <button @click="updateStyle('color', undefined)" class="text-slate-500 hover:text-red-400 w-5 h-5 flex items-center justify-center transition-colors">
-            <i class="pi pi-times text-[10px]" />
-          </button>
         </div>
-        <InputText 
-          :modelValue="block.style?.color || ''" 
-          @update:modelValue="v => updateStyle('color', v)"
-          size="small" 
-          class="flex-1 font-mono text-xs"
-          placeholder="Inherit"
-        />
-      </div>
-    </PropField>
+      </PropField>
 
-    <PropField label="Background Color">
-      <div class="flex items-center gap-3">
-        <button 
-          v-if="!block.style?.backgroundColor" 
-          @click="updateStyle('backgroundColor', '#ffffff')" 
-          class="w-6 h-6 rounded border border-dashed border-slate-500 bg-transparent-checker shrink-0 hover:border-slate-400 transition-colors"
-          title="Pick Color"
-        ></button>
-        <div v-else class="flex items-center gap-1">
-          <ColorPicker 
-            :modelValue="block.style.backgroundColor.replace('#', '')" 
-            @change="e => handleColorChange('backgroundColor', e)" 
+      <PropField label="Background Color">
+        <div class="flex items-center gap-3">
+          <button 
+            v-if="!block.style?.backgroundColor" 
+            @click="updateStyle('backgroundColor', '#ffffff')" 
+            class="w-6 h-6 rounded border border-dashed border-slate-500 bg-transparent-checker shrink-0 hover:border-slate-400 transition-colors"
+            title="Pick Color"
+          ></button>
+          <div v-else class="flex items-center gap-1">
+            <ColorPicker 
+              :modelValue="block.style.backgroundColor.replace('#', '')" 
+              @change="e => handleColorChange('backgroundColor', e)" 
+            />
+            <button @click="updateStyle('backgroundColor', undefined)" class="text-slate-500 hover:text-red-400 w-5 h-5 flex items-center justify-center transition-colors">
+              <i class="pi pi-times text-[10px]" />
+            </button>
+          </div>
+          <InputText 
+            :modelValue="block.style?.backgroundColor || ''" 
+            @update:modelValue="v => updateStyle('backgroundColor', v)"
+            size="small" 
+            class="flex-1 font-mono text-xs"
+            placeholder="Transparent"
           />
-          <button @click="updateStyle('backgroundColor', undefined)" class="text-slate-500 hover:text-red-400 w-5 h-5 flex items-center justify-center transition-colors">
-            <i class="pi pi-times text-[10px]" />
-          </button>
         </div>
-        <InputText 
-          :modelValue="block.style?.backgroundColor || ''" 
-          @update:modelValue="v => updateStyle('backgroundColor', v)"
-          size="small" 
-          class="flex-1 font-mono text-xs"
-          placeholder="Transparent"
-        />
+      </PropField>
+
+      <div class="grid grid-cols-2 gap-4 mt-2">
+        <PropField label="Font Size">
+          <InputText 
+            :modelValue="block.style?.fontSize || ''" 
+            @update:modelValue="v => updateStyle('fontSize', v)"
+            size="small"
+            fluid
+            placeholder="e.g. 1.25rem"
+          />
+        </PropField>
+        <PropField label="Font Weight">
+          <Select 
+            :modelValue="block.style?.fontWeight || ''" 
+            :options="fontWeightOptions"
+            @update:modelValue="v => updateStyle('fontWeight', v)"
+            size="small"
+            class="w-full"
+            placeholder="Inherit"
+            showClear
+          />
+        </PropField>
       </div>
-    </PropField>
-    <div class="grid grid-cols-2 gap-4 mt-2">
-      <PropField label="Font Size">
+
+      <PropField label="Font Family">
         <InputText 
-          :modelValue="block.style?.fontSize || ''" 
-          @update:modelValue="v => updateStyle('fontSize', v)"
+          :modelValue="block.style?.fontFamily || ''" 
+          @update:modelValue="v => updateStyle('fontFamily', v)"
           size="small"
           fluid
-          placeholder="e.g. 14px"
+          placeholder="Inherit"
         />
       </PropField>
-      <PropField label="Font Weight">
+
+      <PropField label="Line Height">
+        <InputText fluid 
+          :modelValue="block.style?.lineHeight" 
+          @update:modelValue="v => updateStyle('lineHeight', v)" 
+          placeholder="e.g. 1.5" 
+          size="small" 
+        />
+      </PropField>
+
+      <PropField label="Text Align">
         <Select 
-          :modelValue="block.style?.fontWeight || ''" 
-          :options="fontWeightOptions"
-          @update:modelValue="v => updateStyle('fontWeight', v)"
+          :modelValue="block.style?.textAlign || ''" 
+          :options="textAlignOptions"
+          @update:modelValue="v => updateStyle('textAlign', v)"
           size="small"
           class="w-full"
-          placeholder="Default"
+          placeholder="Inherit"
           showClear
         />
       </PropField>
-    </div>
 
-    <PropField label="Font Family">
-      <InputText 
-        :modelValue="block.style?.fontFamily || ''" 
-        @update:modelValue="v => updateStyle('fontFamily', v)"
-        size="small"
-        fluid
-        placeholder="Inherit"
-      />
-    </PropField>
-
-    <PropField label="Text Align">
-      <Select 
-        :modelValue="block.style?.textAlign || ''" 
-        :options="textAlignOptions"
-        @update:modelValue="v => updateStyle('textAlign', v)"
-        size="small"
-        class="w-full"
-        placeholder="Inherit"
-        showClear
-      />
-    </PropField>
-
-    <div class="grid grid-cols-2 gap-4 mt-2">
-      <PropField label="Border Radius">
-        <InputText 
-          :modelValue="block.style?.borderRadius || ''" 
-          @update:modelValue="v => updateStyle('borderRadius', v)"
+      <PropField label="Font Style">
+        <SelectButton 
+          :modelValue="block.style?.fontStyle || 'normal'" 
+          @update:modelValue="v => updateStyle('fontStyle', v)"
+          :options="fontStyleOptions"
+          optionLabel="label"
+          optionValue="value"
           size="small"
-          fluid
-          placeholder="e.g. 8px"
+          :pt="{ root: { class: 'flex-wrap gap-1 w-full' }, pcButton: { root: { class: 'flex-1 min-w-0' } } }"
         />
       </PropField>
-      <PropField label="Opacity">
-        <InputText 
-          :modelValue="block.style?.opacity || ''" 
-          @update:modelValue="v => updateStyle('opacity', v)"
+
+      <PropField label="Text Decoration">
+        <SelectButton 
+          :modelValue="block.style?.textDecoration || 'none'" 
+          @update:modelValue="v => updateStyle('textDecoration', v)"
+          :options="textDecoOptions"
+          optionLabel="label"
+          optionValue="value"
           size="small"
-          fluid
-          placeholder="0.0 to 1.0"
+          :pt="{ root: { class: 'flex-wrap gap-1 w-full' }, pcButton: { root: { class: 'flex-1 min-w-0' } } }"
         />
       </PropField>
-    </div>
+
+      <PropField label="Text Transform">
+        <SelectButton 
+          :modelValue="block.style?.textTransform || 'none'" 
+          @update:modelValue="v => updateStyle('textTransform', v)"
+          :options="textTransformOptions"
+          optionLabel="label"
+          optionValue="value"
+          size="small"
+          :pt="{ root: { class: 'flex-wrap gap-1 w-full' }, pcButton: { root: { class: 'flex-1 min-w-0' } } }"
+        />
+      </PropField>
+
+      <div class="grid grid-cols-2 gap-4 mt-2">
+        <PropField label="Border Radius">
+          <InputText 
+            :modelValue="block.style?.borderRadius || ''" 
+            @update:modelValue="v => updateStyle('borderRadius', v)"
+            size="small"
+            fluid
+            placeholder="e.g. 8px"
+          />
+        </PropField>
+        <PropField label="Opacity">
+          <InputText 
+            :modelValue="block.style?.opacity || ''" 
+            @update:modelValue="v => updateStyle('opacity', v)"
+            size="small"
+            fluid
+            placeholder="0.0 to 1.0"
+          />
+        </PropField>
+      </div>
 
     </GmPropSection>
   </div>

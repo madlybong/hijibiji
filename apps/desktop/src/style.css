@@ -2,44 +2,30 @@
 @import "tailwindcss";
 @import "primeicons/primeicons.css";
 
-/* Tailwind v4 + PrimeVue layer order */
 @layer theme, base, primevue, components, utilities;
 
-/* ================================================================
-   GLOBAL BRAND TOKENS (Tailwind theme layer)
-   These are the design system defaults. Block components use
-   var(--gm-*) tokens as fallbacks when no block-level override exists.
-   ================================================================ */
 @theme {
-  /* Document Content Colors */
   --color-gm-primary:        #D4AF37;
   --color-gm-accent:         #0F172A;
   --color-gm-text-dark:      #1E293B;
   --color-gm-text-muted:     #64748B;
-  --color-gm-bullish:        #059669;
+  --color-gm-bullish:        #10B981;
   --color-gm-bullish-bg:     #ecfdf5;
   --color-gm-bearish:        #DC2626;
   --color-gm-bearish-bg:     #fef2f2;
   --color-gm-border-light:   #E2E8F0;
   --color-gm-border-dark:    #94A3B8;
+  --color-gm-warning:        #eab308;
+  --color-gm-error:          #ef4444;
 
-  /* Typography */
   --font-montserrat: "Montserrat", sans-serif;
   --font-inter:      "Inter", sans-serif;
 }
 
-/* ================================================================
-   CSS CUSTOM PROPERTY DEFAULTS
-   These are the global defaults for the --block-* variable system.
-   GmBlockWrapper overrides these per-block using block.style.
-   Block components use var(--block-*, fallback) to render.
-   ================================================================ */
 :root {
-  /* Page canvas defaults */
   --gm-page-width:  210mm;
   --gm-page-height: 297mm;
 
-  /* Block-level style vars — set by GmBlockWrapper per block */
   --block-color:         var(--doc-text, var(--color-gm-text-dark));
   --block-bg-color:      transparent;
   --block-font-size:     inherit;
@@ -54,78 +40,9 @@
   --block-opacity:       1;
 }
 
-/* ================================================================
-   A4 PAGE PHYSICAL DIMENSIONS
-   Must be outside @layer — Tailwind v4 strips property declarations
-   inside @layer components.
-   ================================================================ */
 .gm-doc-page {
-  width:      var(--gm-page-width,  210mm);
-  height:     var(--gm-page-height, 297mm);
-  max-height: var(--gm-page-height, 297mm);
-}
-
-/* ================================================================
-   BASE LAYER
-   Application chrome and scrollbars.
-   ================================================================ */
-@layer base {
-  body {
-    @apply bg-slate-950 font-inter leading-snug;
-    -webkit-print-color-adjust: exact;
-    color: #e2e8f0;
-  }
-
-  * {
-    scrollbar-width: thin;
-    scrollbar-color: #334155 transparent;
-  }
-}
-
-/* ================================================================
-   COMPONENTS LAYER
-   Application layout classes. Block rendering is done via
-   inline CSS vars, not classes defined here.
-   ================================================================ */
-@layer components {
-
-  /* --- CANVAS & VIEWPORT (neutral light gray — like Lumora) --- */
-  .gm-canvas-viewport {
-    background-color: #e5e7eb;
-    background-image: radial-gradient(circle, rgba(0,0,0,0.12) 1px, transparent 1px);
-    background-size: 24px 24px;
-  }
-
-  /* --- PAGE CONTAINER (editor scroll area) --- */
-  .gm-page-container {
-    @apply flex flex-col items-center py-16 gap-16 min-w-max;
-  }
-
-  /* --- PAGE (decorative shadow/border only; dimensions set above) --- */
-  .gm-doc-page {
-    @apply bg-white mx-auto relative shadow-[0_8px_32px_rgba(0,0,0,0.25),0_2px_8px_rgba(0,0,0,0.15)] overflow-hidden;
-  }
-
-  /* --- PRINT OVERRIDES --- */
-  @media print {
-    body           { @apply bg-transparent; }
-    .gm-page-container { @apply gap-0 block py-0; }
-    .gm-doc-page   { @apply m-0 shadow-none break-after-page; }
-  }
-
-  /* --- TIPTAP INLINE EDITOR --- */
-  .tiptap {
-    outline: none;
-    cursor: text;
-  }
-
-  .tiptap p.is-editor-empty:first-child::before {
-    content: attr(data-placeholder);
-    float: left;
-    color: var(--color-gm-text-muted);
-    pointer-events: none;
-    height: 0;
-  }
+  width: var(--gm-page-width, 210mm);
+  min-height: var(--gm-page-height, 297mm);
 }
 
 .bg-transparent-checker {
@@ -135,4 +52,46 @@
     linear-gradient(-45deg, transparent 75%, #334155 75%);
   background-size: 8px 8px;
   background-position: 0 0, 0 4px, 4px -4px, -4px 0px;
+}
+
+@layer base {
+  body {
+    @apply bg-slate-950 font-inter leading-snug;
+    -webkit-print-color-adjust: exact;
+    color: #e2e8f0;
+  }
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: #334155 transparent;
+  }
+}
+
+@layer components {
+  .gm-canvas-viewport {
+    background-color: #e5e7eb;
+    background-image: radial-gradient(circle, rgba(0,0,0,0.12) 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+  .gm-page-container {
+    @apply flex flex-col items-center py-16 gap-16 min-w-max;
+  }
+  .gm-doc-page {
+    @apply bg-white mx-auto relative shadow-[0_8px_32px_rgba(0,0,0,0.25),0_2px_8px_rgba(0,0,0,0.15)] overflow-hidden;
+  }
+  @media print {
+    body           { @apply bg-transparent; }
+    .gm-page-container { @apply gap-0 block py-0; }
+    .gm-doc-page   { @apply m-0 shadow-none break-after-page; }
+  }
+  .tiptap {
+    outline: none;
+    cursor: text;
+  }
+  .tiptap p.is-editor-empty:first-child::before {
+    content: attr(data-placeholder);
+    float: left;
+    color: var(--color-gm-text-muted);
+    pointer-events: none;
+    height: 0;
+  }
 }

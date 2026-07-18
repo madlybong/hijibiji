@@ -4,6 +4,34 @@ import type { GmDocument, GmPage, GmBlock, BlockType, GlobalBrandSettings } from
 
 export const useDocumentStore = defineStore('document', () => {
   const document    = ref<GmDocument | null>(null);
+  
+  const removeBlockById = (blocks: GmBlock[], id: string): boolean => {
+    const idx = blocks.findIndex(b => b.id === id);
+    if (idx !== -1) {
+      blocks.splice(idx, 1);
+      return true;
+    }
+    for (const block of blocks) {
+      if (block.data && Array.isArray(block.data.blocks)) {
+        if (removeBlockById(block.data.blocks, id)) return true;
+      }
+    }
+    return false;
+  };
+
+  const mutateBlockById = (blocks: GmBlock[], id: string, mutator: (b: GmBlock) => void): boolean => {
+    const block = blocks.find(b => b.id === id);
+    if (block) {
+      mutator(block);
+      return true;
+    }
+    for (const b of blocks) {
+      if (b.data && Array.isArray(b.data.blocks)) {
+        if (mutateBlockById(b.data.blocks, id, mutator)) return true;
+      }
+    }
+    return false;
+  };
   const selectedBlockId = ref<string | null>(null);
   const selectedPageId  = ref<string | null>(null);
   const isDirty  = ref(false);

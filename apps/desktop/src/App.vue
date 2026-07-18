@@ -1,14 +1,20 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { onMounted } from 'vue';
 import { useDocumentStore } from './store/useDocumentStore';
-import GmHome from './views/GmHome.vue';
 import GmEditorShell from './layouts/GmEditorShell.vue';
+import { createGoldmineTemplate } from './services/seedData';
+// import { loadDocument } from './services/dbService'; // Will use later
 
 const docStore = useDocumentStore();
-const hasDocument = computed(() => docStore.document !== null);
+
+onMounted(async () => {
+  // For now, initialize an empty document if none exists
+  if (!docStore.document) {
+    docStore.initDocument(createGoldmineTemplate());
+  }
+});
 </script>
 
 <template>
-  <GmEditorShell v-if="hasDocument" />
-  <GmHome v-else />
+  <GmEditorShell />
 </template>

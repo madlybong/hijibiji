@@ -30,20 +30,20 @@ const getPageSeverity = (type: string) => {
 </script>
 
 <template>
-  <div class="flex flex-col h-full bg-surface-900 border-r border-surface-800">
+  <div class="flex flex-col h-full bg-slate-950 border-r border-white/5">
     <!-- Segmented Control -->
-    <div class="px-4 py-3 border-b border-surface-800">
-      <div class="flex bg-surface-800 rounded-full p-1">
+    <div class="px-4 py-3 border-b border-white/5">
+      <div class="flex bg-slate-800 rounded-full p-1">
         <button 
           class="flex-1 flex justify-center items-center gap-2 py-1.5 text-[10px] font-bold uppercase tracking-widest rounded-full transition-colors" 
-          :class="activeTab === 'blocks' ? 'bg-surface-600 text-surface-0 shadow-sm' : 'text-surface-400 hover:text-surface-200'" 
+          :class="activeTab === 'blocks' ? 'bg-slate-700 text-white shadow-sm' : 'text-slate-400 hover:text-slate-200'" 
           @click="activeTab = 'blocks'"
         >
           <Component class="w-3.5 h-3.5" /> Blocks
         </button>
         <button 
           class="flex-1 flex justify-center items-center gap-2 py-1.5 text-[10px] font-bold uppercase tracking-widest rounded-full transition-colors" 
-          :class="activeTab === 'pages' ? 'bg-surface-600 text-surface-0 shadow-sm' : 'text-surface-400 hover:text-surface-200'" 
+          :class="activeTab === 'pages' ? 'bg-slate-700 text-white shadow-sm' : 'text-slate-400 hover:text-slate-200'" 
           @click="activeTab = 'pages'"
         >
           <Layers class="w-3.5 h-3.5" /> Pages
@@ -91,25 +91,25 @@ const getPageSeverity = (type: string) => {
           <div 
             v-for="(page, index) in docStore.document.pages" 
             :key="page.id"
-            class="bg-surface-800 rounded p-2 flex items-center gap-3 border border-surface-700 transition-colors cursor-pointer group"
-            :class="{ 'border-l-2 border-l-primary bg-surface-700': docStore.selectedPageId === page.id }"
+            class="bg-slate-800 border border-slate-700 hover:border-slate-600 rounded-lg p-2 flex items-center gap-3 cursor-pointer group transition-colors"
+            :class="{ '!bg-slate-700 !border-yellow-500/60': docStore.selectedPageId === page.id }"
             @click="docStore.selectPage(page.id)"
           >
             <!-- Drag Handle -->
-            <div class="drag-handle cursor-grab text-surface-500 hover:text-surface-200 px-1 opacity-0 group-hover:opacity-100 transition-opacity">
+            <div class="drag-handle cursor-grab text-slate-500 hover:text-slate-200 px-1 opacity-0 group-hover:opacity-100 transition-opacity">
               <GripVertical class="w-3.5 h-3.5" />
             </div>
             
             <!-- Thumbnail Silhouette -->
-            <div class="rounded-sm aspect-[1/1.41] bg-surface-900 border border-surface-600 w-6 flex items-center justify-center flex-shrink-0">
+            <div class="rounded-sm aspect-[1/1.41] bg-slate-900 border border-slate-600 w-6 flex items-center justify-center flex-shrink-0">
               <div class="w-full h-full opacity-20" :style="{ backgroundColor: page.pageStyle?.bgColor || '#0F172A' }" v-if="page.type !== 'blank'"></div>
               <div class="w-full h-full bg-white opacity-90" v-else></div>
             </div>
 
             <!-- Title & Badge -->
             <div class="flex-1 flex flex-col gap-1 min-w-0">
-              <span class="font-bold text-xs truncate" :class="docStore.selectedPageId === page.id ? 'text-surface-0' : 'text-surface-300'">
-                Page {{ index + 1 }}
+              <span class="font-bold text-xs truncate text-slate-100">
+                {{ page.label || `Page ${index + 1}` }}
               </span>
               <div class="flex items-center">
                 <Tag :value="page.type" :severity="getPageSeverity(page.type)" class="text-[8px] uppercase tracking-wider !px-1.5 !py-0.5 leading-none" />

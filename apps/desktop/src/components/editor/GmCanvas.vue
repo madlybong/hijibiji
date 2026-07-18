@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { useDocumentStore } from '../../store/useDocumentStore';
 import { useAppStore } from '../../store/useAppStore';
 import GmDocPage from '../../layouts/GmDocPage.vue';
@@ -49,38 +49,87 @@ const handlePanEnd = () => {
   isPanning.value = false;
 };
 
-const fitToScreen = () => {
-  scale.value = 0.6; // Adjust dynamically based on viewport if needed
-  if (viewportRef.value) {
-    viewportRef.value.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+const getPageDimensions = (size: string) => {
+  switch (size) {
+    case 'Letter': return { widthMm: 215.9, heightMm: 279.4 };
+    case 'A3': return { widthMm: 297, heightMm: 420 };
+    case 'A5': return { widthMm: 148, heightMm: 210 };
+    case 'A4':
+    default:
+      return { widthMm: 210, heightMm: 297 };
   }
 };
 
-const totalPages = computed(() => docStore.document?.pages.length || 0);
-const activePageIndex = ref(0);
+const fitToScreen = () => {
+  if (viewportRef.value) {
+    const viewportWidth = viewportRef.value.clientWidth;
+    const viewportHeight = viewportRef.value.clientHeight;
+    const size = docStore.document?.pageSize ?? 'A4';
+    const { widthMm, heightMm } = getPageDimensions(size);
+    const pagePxW = widthMm * 3.7795275591;
+    const pagePxH = heightMm * 3.7795275591;
 
-const goToPage = (idx: number) => {
-  if (idx < 0 || idx >= totalPages.value) return;
-  activePageIndex.value = idx;
-  const pageId = docStore.document?.pages[idx]?.id;
-  if (pageId) {
-    docStore.selectPage(pageId);
+    const padding = 128;
+    const availableWidth = viewportWidth - padding;
+    const availableHeight = viewportHeight - padding;
+    
+    const scaleForWidth = availableWidth / pagePxW;
+    const scaleForHeight = availableHeight / pagePxH;
+    const idealScale = Math.min(scaleForWidth, scaleForHeight);
+    
+    scale.value = Math.max(0.2, Math.min(idealScale, 3));
+    
+    panX.value = 0;
+    const targetIdx = Math.max(0, activePageIndex.value);
+    const pageCenterY = 64 + targetIdx * (pagePxH + 64) + (pagePxH / 2);
+    panY.value = (viewportHeight / 2) - (pageCenterY * scale.value);
+  }
+};
+
+// Page navigation logic
+const totalPages = computed(() => docStore.document?.pages.length || 0);
+const activePageIndex = computed(() => {
+  if (!docStore.document || !docStore.selectedPageId) return -1;
+  return docStore.document.pages.findIndex(p => p.id === docStore.selectedPageId);
+});
+
+const goToPage = (index: number) => {
+  if (!docStore.document) return;
+  if (index >= 0 && index < totalPages.value) {
+    const page = docStore.document.pages[index];
+    docStore.selectPage(page.id);
+    
+    // Pan to page
     if (viewportRef.value) {
-      const pageElements = viewportRef.value.querySelectorAll('.group');
-      if (pageElements[idx]) {
-         pageElements[idx].scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }
+      const viewportHeight = viewportRef.value.clientHeight;
+      const size = docStore.document?.pageSize ?? 'A4';
+      const { heightMm } = getPageDimensions(size);
+      const pagePxH = heightMm * 3.7795275591;
+      
+      const pageCenterY = 64 + index * (pagePxH + 64) + (pagePxH / 2);
+      panY.value = (viewportHeight / 2) - (pageCenterY * scale.value);
+      panX.value = 0; // reset horizontal pan
     }
   }
 };
+
+watch(() => docStore.selectedPageId, (newId) => {
+  if (newId && viewportRef.value) {
+    const idx = docStore.document?.pages.findIndex(p => p.id === newId) ?? -1;
+    if (idx !== -1 && idx !== activePageIndex.value) {
+      goToPage(idx);
+    }
+  }
+});
+
 </script>
 
 <template>
   <div 
-    class="relative w-full h-full overflow-hidden"
+    class="relative w-full h-full overflow-hidden bg-surface-950"
     @wheel="handleWheel"
   >
-    <!-- Scrollable Viewport (now hidden) -->
+    <!-- Scrollable Viewport -->
     <div 
       ref="viewportRef"
       class="w-full h-full overflow-hidden gm-canvas-viewport relative"
@@ -96,79 +145,77 @@ const goToPage = (idx: number) => {
         :class="{ 'cursor-grab': isPanMode && !isPanning, 'cursor-grabbing': isPanning }"
         @click.self="deselect"
       >
-      <div 
-        class="flex flex-col items-center py-16 gap-16 min-w-[210mm]" 
-        :class="{ 'pointer-events-none': appStore.editorMode === 'preview' || isPanMode }"
-        @click.self="deselect"
-      >
-        <template v-if="docStore.document">
-          <div 
-            v-for="page in docStore.document.pages" 
-            :key="page.id" 
-            class="relative group shadow-[0_8px_32px_rgba(0,0,0,0.6),0_2px_8px_rgba(0,0,0,0.4)] ring-2 transition-shadow"
-            :class="{ 'ring-primary': docStore.selectedPageId === page.id, 'ring-transparent': docStore.selectedPageId !== page.id }"
-            @click="docStore.selectPage(page.id)"
-          >
-            <GmDocCover v-if="page.type === 'cover'" :page="page" />
-            <GmDocBackCover v-else-if="page.type === 'back-cover'" :page="page" />
-            <GmDocPage v-else :page="page" />
-          </div>
-        </template>
+        <div 
+          class="flex flex-col items-center py-16 gap-16 min-w-[210mm]" 
+          :class="{ 'pointer-events-none': appStore.editorMode === 'preview' || isPanMode }"
+          @click.self="deselect"
+        >
+          <template v-if="docStore.document">
+            <div 
+              v-for="page in docStore.document.pages" 
+              :key="page.id" 
+              class="relative group shadow-[0_8px_32px_rgba(0,0,0,0.6),0_2px_8px_rgba(0,0,0,0.4)] ring-2 transition-shadow"
+              :class="{ 'ring-primary': docStore.selectedPageId === page.id, 'ring-transparent': docStore.selectedPageId !== page.id }"
+              @click="docStore.selectPage(page.id)"
+            >
+              <GmDocCover v-if="page.type === 'cover'" :page="page" />
+              <GmDocBackCover v-else-if="page.type === 'back-cover'" :page="page" />
+              <GmDocPage v-else :page="page" />
+            </div>
+          </template>
+        </div>
       </div>
     </div>
-  </div>
 
     <!-- Floating Toolbar -->
-    <div class="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center shadow-xl z-50 rounded-full border border-slate-600/60 bg-slate-800/95 backdrop-blur-sm p-1">
-      <div class="flex items-center gap-1">
-        <Button variant="text" severity="secondary" size="small" rounded @click="isPanMode = false" :class="{ 'bg-slate-700 text-yellow-400': !isPanMode }" v-tooltip.top="'Select Mode'" class="!w-8 !h-8 !p-0">
-          <template #icon><MousePointer2 class="w-4 h-4" /></template>
-        </Button>
-        <Button variant="text" severity="secondary" size="small" rounded @click="isPanMode = true" :class="{ 'bg-slate-700 text-yellow-400': isPanMode }" v-tooltip.top="'Pan Mode'" class="!w-8 !h-8 !p-0">
-          <template #icon><Move class="w-4 h-4" /></template>
-        </Button>
-        
-        <div class="w-px h-4 bg-slate-600 mx-1"></div>
-        
-        <Button variant="text" severity="secondary" size="small" rounded @click="scale = Math.max(0.2, scale - 0.1)" v-tooltip.top="'Zoom Out'" class="!w-8 !h-8 !p-0">
-          <template #icon><ZoomOut class="w-4 h-4" /></template>
-        </Button>
-        <div class="flex items-center justify-center w-12 text-xs font-mono text-slate-300 pointer-events-none">
-          {{ Math.round(scale * 100) }}%
-        </div>
-        <Button variant="text" severity="secondary" size="small" rounded @click="scale = Math.min(3, scale + 0.1)" v-tooltip.top="'Zoom In'" class="!w-8 !h-8 !p-0">
-          <template #icon><ZoomIn class="w-4 h-4" /></template>
-        </Button>
-        
-        <div class="w-px h-4 bg-slate-600 mx-1"></div>
-        
-        <Button variant="text" severity="secondary" size="small" rounded @click="fitToScreen" v-tooltip.top="'Fit to Screen'" class="!w-8 !h-8 !p-0">
-          <template #icon><Maximize class="w-4 h-4" /></template>
-        </Button>
-
-        <template v-if="totalPages > 1">
-          <div class="w-px h-4 bg-slate-600 mx-2"></div>
-          
-          <Button variant="text" severity="secondary" size="small" rounded @click="goToPage(activePageIndex - 1)" :disabled="activePageIndex <= 0" class="!w-8 !h-8 !p-0 text-slate-300">
-            <template #icon><ChevronLeft class="w-4 h-4" /></template>
-          </Button>
-          
-          <div class="flex items-center gap-1.5 px-2">
-            <button 
-              v-for="(page, idx) in docStore.document?.pages" 
-              :key="page.id"
-              @click="goToPage(idx)"
-              class="w-2 h-2 rounded-full transition-colors"
-              :class="activePageIndex === idx ? 'bg-yellow-400' : 'bg-slate-500 hover:bg-slate-400'"
-              :title="page.label || `Page ${idx + 1}`"
-            ></button>
-          </div>
-          
-          <Button variant="text" severity="secondary" size="small" rounded @click="goToPage(activePageIndex + 1)" :disabled="activePageIndex >= totalPages - 1" class="!w-8 !h-8 !p-0 text-slate-300">
-            <template #icon><ChevronRight class="w-4 h-4" /></template>
-          </Button>
-        </template>
+    <div class="absolute bottom-6 right-6 flex items-center bg-surface-800/90 backdrop-blur-md border border-surface-700 rounded-full shadow-xl p-1 gap-1 z-50">
+      <Button variant="text" severity="secondary" size="small" rounded @click="isPanMode = false" :class="{ 'bg-slate-700 text-primary': !isPanMode }" v-tooltip.top="'Select Mode'" class="!w-8 !h-8 !p-0">
+        <template #icon><MousePointer2 class="w-4 h-4" /></template>
+      </Button>
+      <Button variant="text" severity="secondary" size="small" rounded @click="isPanMode = true" :class="{ 'bg-slate-700 text-primary': isPanMode }" v-tooltip.top="'Pan Mode'" class="!w-8 !h-8 !p-0">
+        <template #icon><Move class="w-4 h-4" /></template>
+      </Button>
+      
+      <div class="w-px h-4 bg-surface-700 mx-1"></div>
+      
+      <Button variant="text" severity="secondary" size="small" rounded @click="scale = Math.max(0.2, scale - 0.1)" v-tooltip.top="'Zoom Out'" class="!w-8 !h-8 !p-0">
+        <template #icon><ZoomOut class="w-4 h-4" /></template>
+      </Button>
+      <div class="flex items-center justify-center w-12 text-xs font-mono text-slate-300 pointer-events-none">
+        {{ Math.round(scale * 100) }}%
       </div>
+      <Button variant="text" severity="secondary" size="small" rounded @click="scale = Math.min(3, scale + 0.1)" v-tooltip.top="'Zoom In'" class="!w-8 !h-8 !p-0">
+        <template #icon><ZoomIn class="w-4 h-4" /></template>
+      </Button>
+      
+      <div class="w-px h-4 bg-surface-700 mx-1"></div>
+      
+      <Button variant="text" severity="secondary" size="small" rounded @click="fitToScreen" v-tooltip.top="'Fit to Screen'" class="!w-8 !h-8 !p-0">
+        <template #icon><Maximize class="w-4 h-4" /></template>
+      </Button>
+
+      <template v-if="totalPages > 1">
+        <div class="w-px h-4 bg-surface-700 mx-2"></div>
+        
+        <Button variant="text" severity="secondary" size="small" rounded @click="goToPage(activePageIndex - 1)" :disabled="activePageIndex <= 0" class="!w-8 !h-8 !p-0 text-slate-300">
+          <template #icon><ChevronLeft class="w-4 h-4" /></template>
+        </Button>
+        
+        <div class="flex items-center gap-1.5 px-2">
+          <button 
+            v-for="(page, idx) in docStore.document?.pages" 
+            :key="page.id"
+            @click="goToPage(idx)"
+            class="w-2 h-2 rounded-full transition-colors"
+            :class="activePageIndex === idx ? 'bg-primary' : 'bg-surface-500 hover:bg-surface-400'"
+            :title="page.label || `Page ${idx + 1}`"
+          ></button>
+        </div>
+        
+        <Button variant="text" severity="secondary" size="small" rounded @click="goToPage(activePageIndex + 1)" :disabled="activePageIndex >= totalPages - 1" class="!w-8 !h-8 !p-0 text-slate-300">
+          <template #icon><ChevronRight class="w-4 h-4" /></template>
+        </Button>
+      </template>
     </div>
   </div>
 </template>

@@ -32,7 +32,7 @@ const selectPage = () => {
     }"
     @click="selectPage"
   >
-    <!-- MAIN CONTENT ZONE (Centered vertically/horizontally by default) -->
+    <!-- MAIN CONTENT ZONE -->
     <div class="flex-1 w-full flex flex-col justify-center items-center p-12">
       <VueDraggable 
         v-model="page.blocks"

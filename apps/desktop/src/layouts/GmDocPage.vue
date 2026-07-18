@@ -48,21 +48,31 @@ useMutationObserver(pageRef, checkOverflow, { childList: true, subtree: true, ch
   >
     <!-- HEADER ZONE -->
     <div v-if="page.showHeader" class="w-full min-h-[40px] mb-4">
+      <!-- Only active page gets the draggable zone to prevent Sortable.js array collisions -->
       <VueDraggable 
-        v-model="page.headerBlocks"
+        v-if="docStore.document && isSelected && !isPreview"
+        v-model="docStore.document.headerBlocks"
         :group="{ name: 'blocks' }"
         :animation="150"
-        :disabled="isPreview"
-        class="min-h-[40px] w-full"
-        :class="!isPreview ? 'border border-dashed border-transparent hover:border-gray-300' : ''"
+        class="min-h-[40px] w-full border border-dashed border-transparent hover:border-gray-300"
       >
         <GmBlockRenderer 
-          v-for="block in page.headerBlocks" 
+          v-for="block in (docStore.document.headerBlocks || [])" 
           :key="block.id" 
           :block="block" 
           :page-id="page.id" 
         />
       </VueDraggable>
+      
+      <!-- Statically render for inactive pages -->
+      <div v-else-if="docStore.document" class="min-h-[40px] w-full">
+        <GmBlockRenderer 
+          v-for="block in (docStore.document.headerBlocks || [])" 
+          :key="block.id" 
+          :block="block" 
+          :page-id="page.id" 
+        />
+      </div>
     </div>
 
     <!-- MAIN CONTENT ZONE -->
@@ -87,20 +97,29 @@ useMutationObserver(pageRef, checkOverflow, { childList: true, subtree: true, ch
     <!-- FOOTER ZONE -->
     <div v-if="page.showFooter" class="w-full min-h-[40px] mt-4">
       <VueDraggable 
-        v-model="page.footerBlocks"
+        v-if="docStore.document && isSelected && !isPreview"
+        v-model="docStore.document.footerBlocks"
         :group="{ name: 'blocks' }"
         :animation="150"
-        :disabled="isPreview"
-        class="min-h-[40px] w-full"
-        :class="!isPreview ? 'border border-dashed border-transparent hover:border-gray-300' : ''"
+        class="min-h-[40px] w-full border border-dashed border-transparent hover:border-gray-300"
       >
         <GmBlockRenderer 
-          v-for="block in page.footerBlocks" 
+          v-for="block in (docStore.document.footerBlocks || [])" 
           :key="block.id" 
           :block="block" 
           :page-id="page.id" 
         />
       </VueDraggable>
+
+      <!-- Statically render for inactive pages -->
+      <div v-else-if="docStore.document" class="min-h-[40px] w-full">
+        <GmBlockRenderer 
+          v-for="block in (docStore.document.footerBlocks || [])" 
+          :key="block.id" 
+          :block="block" 
+          :page-id="page.id" 
+        />
+      </div>
     </div>
 
     <!-- OVERFLOW INDICATOR -->

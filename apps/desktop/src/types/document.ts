@@ -93,6 +93,7 @@ export interface GmPage {
   blocks: GmBlock[];
   showHeader?: boolean;       // Default: true for 'blank', false for 'cover'/'back-cover'
   showFooter?: boolean;       // Default: true for 'blank', false for 'cover'/'back-cover'
+
   pageStyle?: PageStyle;
 }
 

@@ -5,7 +5,7 @@ import { useDocumentStore } from '../../store/useDocumentStore';
 const props = defineProps<{
   block: any;
   depth: number;
-  index: number;
+  index: number | string;
 }>();
 
 const docStore = useDocumentStore();

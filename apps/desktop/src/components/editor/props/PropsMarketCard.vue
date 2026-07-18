@@ -88,3 +88,6 @@ const borderOptions = [
     </div>
   </div>
 </template>
+        :options="borderOptions"
+        optionLabel="label"
+        optionValue="value"

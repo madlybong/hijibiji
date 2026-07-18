@@ -25,10 +25,6 @@ const updatePageStyle = (field: string, value: any) => {
   });
 };
 
-const handlePageColorChange = (e: any) => {
-  const hex = e.value.startsWith('#') ? e.value : '#' + e.value;
-  updatePageStyle('bgColor', hex);
-};
 </script>
 
 <template>
@@ -59,15 +55,27 @@ const handlePageColorChange = (e: any) => {
     <GmPropSection label="Page Style" :default-open="true">
       <PropField label="Background Color">
         <div class="flex items-center gap-3">
-          <ColorPicker 
-            :modelValue="page.pageStyle?.bgColor?.replace('#', '') || 'FFFFFF'" 
-            @change="handlePageColorChange" 
-          />
+          <button 
+            v-if="!page.pageStyle?.bgColor" 
+            @click="updatePageStyle('bgColor', '#ffffff')" 
+            class="w-6 h-6 rounded border border-dashed border-slate-500 bg-transparent-checker shrink-0 hover:border-slate-400 transition-colors"
+            title="Pick Color"
+          ></button>
+          <div v-else class="flex items-center gap-1">
+            <ColorPicker 
+              :modelValue="page.pageStyle.bgColor.replace('#', '')"
+              @change="e => updatePageStyle('bgColor', '#' + e.value)" 
+            />
+            <button @click="updatePageStyle('bgColor', undefined)" class="text-slate-500 hover:text-red-400 w-5 h-5 flex items-center justify-center transition-colors">
+              <i class="pi pi-times text-[10px]" />
+            </button>
+          </div>
           <InputText 
-            :modelValue="page.pageStyle?.bgColor || '#FFFFFF'" 
+            :modelValue="page.pageStyle?.bgColor || ''" 
             @update:modelValue="v => updatePageStyle('bgColor', v)"
             size="small" 
             class="flex-1 font-mono text-xs"
+            placeholder="Transparent"
           />
         </div>
       </PropField>

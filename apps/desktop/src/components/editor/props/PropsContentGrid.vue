@@ -1,6 +1,8 @@
 <script setup lang="ts">
+import PropField from './PropField.vue';
 import SelectButton from 'primevue/selectbutton';
 import InputText from 'primevue/inputtext';
+
 const props = defineProps<{ data: any }>();
 const emit = defineEmits(['update']);
 
@@ -30,16 +32,48 @@ const justifyOptions = [
 </script>
 
 <template>
-  <div class="flex flex-col gap-4 p-4">
-    <div class="flex flex-col gap-1">
-      <label class="text-[10px] font-bold text-gray-500 uppercase">Columns</label>
+  <div class="flex flex-col gap-4">
+    <PropField label="Columns">
       <SelectButton 
-        :modelValue="data.cols" 
+        :modelValue="data.cols || 2" 
         @update:modelValue="v => updateField('cols', v)"
         :options="colOptions"
         optionLabel="label"
         optionValue="value"
+        size="small"
+        :pt="{ root: { class: 'flex-wrap gap-1 w-full' }, pcButton: { root: { class: 'flex-1 min-w-0 text-xs' } } }"
       />
-    </div>
+    </PropField>
+    <PropField label="Gap">
+      <InputText 
+        :modelValue="data.gap || '0.75rem'" 
+        @update:modelValue="v => updateField('gap', v)"
+        size="small"
+        fluid
+        placeholder="e.g. 1rem"
+      />
+    </PropField>
+    <PropField label="Vertical Align (Items)">
+      <SelectButton 
+        :modelValue="data.alignItems || 'stretch'" 
+        @update:modelValue="v => updateField('alignItems', v)"
+        :options="alignOptions"
+        optionLabel="label"
+        optionValue="value"
+        size="small"
+        :pt="{ root: { class: 'flex-wrap gap-1 w-full' }, pcButton: { root: { class: 'flex-1 min-w-0 text-[10px]' } } }"
+      />
+    </PropField>
+    <PropField label="Horizontal Align (Items)">
+      <SelectButton 
+        :modelValue="data.justifyItems || 'stretch'" 
+        @update:modelValue="v => updateField('justifyItems', v)"
+        :options="justifyOptions"
+        optionLabel="label"
+        optionValue="value"
+        size="small"
+        :pt="{ root: { class: 'flex-wrap gap-1 w-full' }, pcButton: { root: { class: 'flex-1 min-w-0 text-[10px]' } } }"
+      />
+    </PropField>
   </div>
 </template>
