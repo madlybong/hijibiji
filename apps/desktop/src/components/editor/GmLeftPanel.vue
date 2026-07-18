@@ -9,7 +9,7 @@ const activeTab = ref<'blocks' | 'pages'>('blocks');
 const docStore = useDocumentStore();
 
 const addPage = () => {
-  docStore.addPage('standard');
+  docStore.addPage('blank');
 };
 </script>
 

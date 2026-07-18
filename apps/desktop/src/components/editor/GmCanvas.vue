@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { useDocumentStore } from '../../store/useDocumentStore';
 import { useAppStore } from '../../store/useAppStore';
-import GmNlPage from '../../layouts/GmNlPage.vue';
-import GmNlCover from '../../layouts/GmNlCover.vue';
-import GmNlBackcover from '../../layouts/GmNlBackcover.vue';
+import GmDocPage from '../../layouts/GmDocPage.vue';
+import GmDocCover from '../../layouts/GmDocCover.vue';
+import GmDocBackCover from '../../layouts/GmDocBackCover.vue';
 
 const docStore = useDocumentStore();
 const appStore = useAppStore();
@@ -23,9 +23,9 @@ const deselect = () => {
       <div v-for="page in docStore.document.pages" :key="page.id" class="relative group">
         <!-- We can wrap it in a container if we want page-level hover actions -->
         
-        <GmNlCover v-if="page.type === 'cover'" :page-data="page" />
-        <GmNlBackcover v-else-if="page.type === 'backcover'" :page-data="page" />
-        <GmNlPage v-else :page-data="page" />
+        <GmDocCover v-if="page.type === 'cover'" :page-data="page" />
+        <GmDocBackCover v-else-if="page.type === 'back-cover'" :page-data="page" />
+        <GmDocPage v-else :page-data="page" />
         
       </div>
     </template>

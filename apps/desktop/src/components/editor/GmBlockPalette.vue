@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { VueDraggable } from 'vue-draggable-plus';
-import { v4 as uuidv4 } from 'uuid';
-import { Type, LayoutGrid, FileText, Activity, TrendingUp, Maximize2, LayoutTemplate } from 'lucide-vue-next';
+import { Type, LayoutGrid, FileText, Activity, TrendingUp, Maximize2 } from 'lucide-vue-next';
 import type { BlockType } from '../../types/document';
 
 const createTemplate = (type: BlockType, data: any) => ({

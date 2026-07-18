@@ -8,8 +8,8 @@ const props = defineProps<{
 
 const emit = defineEmits(['update']);
 
-const updateText = (val: string) => {
-  emit('update', { ...props.data, text: val });
+const updateText = (val: string | undefined) => {
+  emit('update', { ...props.data, text: val || '' });
 };
 </script>
 

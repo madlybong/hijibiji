@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { watch, onBeforeUnmount, ref } from 'vue';
+import { watch, onBeforeUnmount } from 'vue';
 import { useEditor, EditorContent } from '@tiptap/vue-3';
 import StarterKit from '@tiptap/starter-kit';
 import Placeholder from '@tiptap/extension-placeholder';
@@ -27,7 +27,7 @@ const editor = useEditor({
 
 watch(() => props.html, (newHtml) => {
   if (editor.value && editor.value.getHTML() !== newHtml) {
-    editor.value.commands.setContent(newHtml, false);
+    editor.value.commands.setContent(newHtml);
   }
 });
 

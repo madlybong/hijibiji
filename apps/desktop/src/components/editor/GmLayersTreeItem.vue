@@ -68,7 +68,7 @@ const children = computed(() => {
         :key="child.id"
         :block="child"
         :depth="depth + 1"
-        :index="idx"
+        :index="Number(idx)"
       />
     </template>
   </div>

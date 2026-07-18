@@ -22,7 +22,7 @@ const alignOptions = ['flex-start', 'center', 'flex-end', 'stretch', 'baseline']
     <PropField label="Gap">
       <InputText 
         :modelValue="data.gap || ''" 
-        @update:modelValue="v => updateData('gap', v)"
+        @update:modelValue="v => updateData('gap', v || '')"
         size="small"
         fluid
         placeholder="e.g. 1rem"

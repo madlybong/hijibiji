@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { ref, watch } from 'vue';
 import InputText from 'primevue/inputtext';
 import ColorPicker from 'primevue/colorpicker';
 import PropField from './PropField.vue';

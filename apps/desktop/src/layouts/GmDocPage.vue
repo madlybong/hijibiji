@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import type { GmPage } from '../../types/document';
-import GmBlockRenderer from '../editor/GmBlockRenderer.vue';
+import type { GmPage } from '../types/document';
+import GmBlockRenderer from '../components/editor/GmBlockRenderer.vue';
 import { VueDraggable } from 'vue-draggable-plus';
-import { useAppStore } from '../../store/useAppStore';
-import { useDocumentStore } from '../../store/useDocumentStore';
+import { useAppStore } from '../store/useAppStore';
+import { useDocumentStore } from '../store/useDocumentStore';
 
 const props = defineProps<{ page: GmPage }>();
 const appStore = useAppStore();
