@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import SelectButton from 'primevue/selectbutton';
 import InputText from 'primevue/inputtext';
-import InputText from 'primevue/inputtext';
-
 const props = defineProps<{ data: any }>();
 const emit = defineEmits(['update']);
 
