@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { useDocumentStore } from '../../store/useDocumentStore';
 import { useAppStore } from '../../store/useAppStore';
 import GmDocPage from '../../layouts/GmDocPage.vue';
 import GmDocCover from '../../layouts/GmDocCover.vue';
 import GmDocBackCover from '../../layouts/GmDocBackCover.vue';
 import Button from 'primevue/button';
-import { ZoomIn, ZoomOut, Maximize, Move, MousePointer2 } from 'lucide-vue-next';
+import { ZoomIn, ZoomOut, Maximize, Move, MousePointer2, ChevronLeft, ChevronRight } from 'lucide-vue-next';
 
 const docStore = useDocumentStore();
 const appStore = useAppStore();
@@ -53,6 +53,24 @@ const fitToScreen = () => {
   scale.value = 0.6; // Adjust dynamically based on viewport if needed
   if (viewportRef.value) {
     viewportRef.value.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+  }
+};
+
+const totalPages = computed(() => docStore.document?.pages.length || 0);
+const activePageIndex = ref(0);
+
+const goToPage = (idx: number) => {
+  if (idx < 0 || idx >= totalPages.value) return;
+  activePageIndex.value = idx;
+  const pageId = docStore.document?.pages[idx]?.id;
+  if (pageId) {
+    docStore.selectPage(pageId);
+    if (viewportRef.value) {
+      const pageElements = viewportRef.value.querySelectorAll('.group');
+      if (pageElements[idx]) {
+         pageElements[idx].scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }
   }
 };
 </script>
