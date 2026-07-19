@@ -1,0 +1,12 @@
+{
+  "extends": "../../apps/desktop/tsconfig.json",
+  "compilerOptions": {
+    "rootDir": "src",
+    "composite": true,
+    "moduleResolution": "bundler"
+  },
+  "include": ["src"],
+  "references": [
+    { "path": "../types" }
+  ]
+}

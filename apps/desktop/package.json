@@ -11,6 +11,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@goldmine/types": "workspace:*",
+    "@goldmine/sdk": "workspace:*",
+    "@goldmine/blocks": "workspace:*",
+    "@goldmine/data": "workspace:*",
+    "@goldmine/ui": "workspace:*",
     "@primevue/themes": "^4.5.4",
     "@tailwindcss/vite": "^4.3.3",
     "@tauri-apps/api": "^2.11.1",
@@ -23,9 +28,7 @@
     "@tiptap/starter-kit": "^3.28.0",
     "@tiptap/vue-3": "^3.28.0",
     "@vueuse/core": "^14.3.0",
-    "html-to-image": "^1.11.13",
     "lucide-vue-next": "^1.0.0",
-    "pdf-lib": "^1.17.1",
     "pinia": "^4.0.2",
     "primeicons": "^8.0.0",
     "primevue": "^4.0.0",

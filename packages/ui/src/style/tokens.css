@@ -1,0 +1,29 @@
+/* Backgrounds — Aura dark/light aware (via var(--p-surface-*)) */
+@theme {
+  --font-montserrat: "Montserrat", sans-serif;
+  --font-inter: "Inter", sans-serif;
+}
+:root {
+  /* Accent — Mapped to PV primary */
+  --gm-accent:         var(--p-primary-color);
+  --gm-accent-subtle:  color-mix(in srgb, var(--p-primary-color) 20%, transparent);
+
+  /* Spacing */
+  --gm-sidebar-width-left:  280px;
+  --gm-sidebar-width-right: 320px;
+  --gm-titlebar-height:     44px;
+  --gm-panel-padding:       1rem;
+  --gm-item-gap:            0.5rem;
+
+  /* Document Canvas Content Tokens (static, print-safe) */
+  --color-gm-text-dark:     #1a1a1a;
+  --color-gm-text-muted:    #6b7280;
+  --color-gm-accent:        var(--gm-accent);
+  --color-gm-primary:       var(--gm-accent);
+  --color-gm-border-light:  rgba(0, 0, 0, 0.1);
+  --color-gm-border-dark:   rgba(0, 0, 0, 0.25);
+  --color-gm-bullish:       #16a34a;
+  --color-gm-bullish-bg:    rgba(22, 163, 74, 0.1);
+  --color-gm-bearish:       #dc2626;
+  --color-gm-bearish-bg:    rgba(220, 38, 38, 0.1);
+}

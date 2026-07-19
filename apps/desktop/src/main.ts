@@ -3,35 +3,22 @@ import { createPinia } from 'pinia'
 import './style.css'
 import PrimeVue from 'primevue/config';
 import Aura from '@primevue/themes/aura';
-import { definePreset } from '@primevue/themes';
 import Tooltip from 'primevue/tooltip';
 import App from './App.vue'
 
 const app = createApp(App)
 const pinia = createPinia()
-
-const GoldminePreset = definePreset(Aura, {
-  semantic: {
-    primary: {
-      50: '#fefce8',
-      100: '#fef9c3',
-      200: '#fef08a',
-      300: '#fde047',
-      400: '#facc15',
-      500: '#D4AF37',
-      600: '#B8972E',
-      700: '#9C7E26',
-      800: '#7a621e',
-      900: '#614d17',
-      950: '#3d3010'
-    }
-  }
-});
+import ConfirmationService from 'primevue/confirmationservice';
+import { createTauriAdapter } from '@goldmine/data';
+import { useDocumentStore } from './store/useDocumentStore';
 
 app.use(pinia)
+
+const docStore = useDocumentStore();
+docStore.setAdapter(createTauriAdapter());
 app.use(PrimeVue, {
     theme: {
-        preset: GoldminePreset,
+        preset: Aura,
         options: {
             darkModeSelector: '.dark',
             cssLayer: {
@@ -42,8 +29,6 @@ app.use(PrimeVue, {
     }
 });
 
-// Force dark mode for PrimeVue
-document.documentElement.classList.add('dark');
-
 app.directive('tooltip', Tooltip);
-app.mount('#app')
+app.use(ConfirmationService);
+app.mount('#app');

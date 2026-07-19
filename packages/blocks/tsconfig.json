@@ -1,0 +1,14 @@
+{
+  "extends": "../../apps/desktop/tsconfig.json",
+  "compilerOptions": {
+    "rootDir": "src",
+    "composite": true,
+    "moduleResolution": "bundler",
+    "jsx": "preserve"
+  },
+  "include": ["src/**/*.ts", "src/**/*.vue"],
+  "references": [
+    { "path": "../types" },
+    { "path": "../sdk" }
+  ]
+}

@@ -1,0 +1,111 @@
+@reference "tailwindcss";
+@import "./tokens.css";
+
+/* Shell Layout */
+.gmd-app-shell      { @apply flex flex-col w-full overflow-hidden; height: 100dvh; }
+.gmd-titlebar       { @apply flex items-center shrink-0 border-b; 
+                     height: var(--gm-titlebar-height);
+                     background: var(--p-content-background); border-color: var(--p-content-border-color); }
+
+/* Sidebar / Panel */
+.gmd-sidebar        { @apply flex flex-col h-full transition-all duration-200 overflow-hidden;
+                     background: var(--p-content-background); }
+.gmd-sidebar-left   { @apply border-r; border-color: var(--p-content-border-color); }
+.gmd-sidebar-right  { @apply border-l; border-color: var(--p-content-border-color); }
+.gmd-panel-header   { @apply flex items-center shrink-0 px-4 border-b;
+                     height: var(--gm-titlebar-height); border-color: var(--p-content-border-color); }
+.gmd-panel-content  { @apply flex-1 overflow-y-auto; }
+.gmd-section-label  { @apply block text-[9px] font-bold uppercase tracking-widest mb-2 px-1;
+                     color: var(--p-text-muted-color); }
+
+/* List Items */
+.gmd-list-item      { @apply flex items-center gap-3 rounded-lg p-2 cursor-pointer 
+                            transition-colors duration-150 select-none border border-transparent;
+                     color: var(--p-text-muted-color); background: transparent; }
+.gmd-list-item:hover { background: var(--p-content-hover-background); }
+.gmd-list-item--active { @apply border; background: var(--p-content-hover-background);
+                         border-color: var(--gm-accent); color: var(--p-text-color); }
+
+/* Canvas */
+.gmd-canvas         { @apply flex-1 overflow-hidden relative; }
+.gmd-canvas-bg      { background-color: var(--p-surface-ground);
+                     background-image: radial-gradient(circle, color-mix(in srgb, var(--p-text-color) 10%, transparent) 1px, transparent 1px);
+                     background-size: 24px 24px; }
+.gmd-floating-toolbar { @apply absolute bottom-6 right-6 flex items-center rounded-full p-1 gap-1 z-50 backdrop-blur-md;
+                        background: var(--p-content-background); border: 1px solid var(--p-content-border-color); }
+
+/* Home Screen */
+.gmd-home           { @apply flex flex-col items-center min-h-screen p-8;
+                     background: var(--p-surface-ground); }
+.gmd-home-inner     { @apply w-full max-w-5xl flex flex-col; }
+.gmd-brand-logo     { @apply flex items-center gap-4 select-none mb-12; }
+.gmd-brand-name     { @apply text-2xl font-montserrat font-bold tracking-widest; 
+                     color: var(--p-text-color); }
+.gmd-template-grid  { @apply grid gap-4; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
+.gmd-template-card  { @apply flex flex-col items-center text-center gap-3 p-4 rounded-xl 
+                            cursor-pointer transition-all duration-200 border;
+                     background: var(--p-content-background); border-color: var(--p-content-border-color); }
+.gmd-template-card:hover { border-color: var(--gm-accent); background: var(--p-content-hover-background);
+                           transform: translateY(-2px); }
+.gmd-doc-grid       { @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6; }
+.gmd-section-title  { @apply text-xl font-bold mb-6; color: var(--p-text-color); }
+.gmd-prop-grid-2    { @apply grid grid-cols-2 gap-4; }
+
+/* Layers Tree */
+.gmd-layer-item     { @apply flex items-center gap-3 py-2 rounded-md cursor-pointer transition-colors border-l-2 border-transparent text-sm;
+                     color: var(--p-text-muted-color); }
+.gmd-layer-item:hover { background: var(--p-content-hover-background); }
+.gmd-layer-item-active { border-color: var(--gm-accent);
+                        color: var(--p-text-color); background: var(--p-content-hover-background); }
+.gmd-layer-item-hidden { @apply opacity-50; }
+.gmd-layer-item-icon { @apply text-center text-[10px]; width: 1rem; color: var(--gm-accent); opacity: 0.8; }
+.gmd-layer-item-label { @apply font-medium truncate flex-1; }
+.gmd-layer-item-actions { @apply flex items-center gap-2 opacity-60 text-xs; }
+
+/* Document Canvas */
+.gmd-page-container { @apply flex flex-col items-center py-16 gap-16 min-w-max; }
+.gmd-doc-page { @apply mx-auto relative shadow-[0_8px_32px_rgba(0,0,0,0.25),0_2px_8px_rgba(0,0,0,0.15)] overflow-hidden; }
+@media print {
+  .gmd-page-container { @apply gap-0 block py-0; }
+  .gmd-doc-page { @apply m-0 shadow-none break-after-page; }
+}
+
+/* Document Editor Chrome */
+.gmd-drop-zone { @apply border border-dashed border-transparent; }
+.gmd-drop-zone:hover { border-color: var(--p-content-border-color); }
+.gmd-block-label {
+  @apply absolute -top-6 left-2 backdrop-blur-sm border border-b-0 rounded-t px-2 py-0.5;
+  @apply text-[9px] font-bold uppercase tracking-widest shadow-sm pointer-events-none whitespace-nowrap;
+  background: var(--p-content-background);
+  border-color: var(--p-content-border-color);
+  color: var(--gm-accent);
+}
+.gmd-block-badge {
+  @apply absolute -top-6 left-2 backdrop-blur-sm border border-b-0 rounded-t px-2 py-0.5;
+  @apply text-[9px] font-bold uppercase tracking-widest shadow-sm pointer-events-none flex items-center gap-1;
+  background: var(--p-surface-ground);
+  border-color: var(--p-content-border-color);
+  color: var(--p-text-muted-color);
+}
+.gmd-block-toolbar {
+  @apply absolute -bottom-10 left-1/2 -translate-x-1/2 flex items-center shadow-xl z-20 backdrop-blur-sm border rounded-full p-1;
+  background: var(--p-content-background);
+  border-color: var(--p-content-border-color);
+}
+
+/* Added Structural Tokens */
+.gmd-canvas-transform { @apply absolute top-0 left-0 transition-transform duration-75 min-h-max min-w-max flex items-start justify-center w-full h-full; }
+.gmd-doc-page-frame { @apply relative shadow-xl ring-2 transition-shadow; ring-color: var(--gmd-ring-color, transparent); }
+.gmd-empty-state { @apply flex flex-col items-center justify-center p-8 text-center border border-dashed rounded-xl gap-4; border-color: var(--p-content-border-color); background: var(--p-content-background); color: var(--p-text-muted-color); }
+.gmd-save-status { @apply text-xs font-medium opacity-70; color: var(--p-text-muted-color); }
+.gmd-save-status--dirty { color: var(--p-primary-color); opacity: 1; }
+.gmd-titlebar-title { @apply text-sm font-bold flex items-center gap-1; color: var(--p-text-color); }
+.gmd-sidebar-inner { @apply flex flex-col h-full w-full overflow-hidden absolute top-0; }
+.gmd-sidebar-toggle { @apply absolute top-2 z-10 transition-transform duration-200 flex items-center justify-center; }
+.gmd-sidebar-toggle-btn { @apply !w-6 !h-6 !p-0 backdrop-blur shadow-sm; background: var(--p-content-background); }
+.gmd-sidebar-resize-handle { @apply absolute top-0 bottom-0 w-2 cursor-col-resize z-20 transition-colors; }
+.gmd-sidebar-resize-handle:hover { background-color: var(--p-primary-color); opacity: 0.2; }
+.gmd-block-list { @apply flex flex-col gap-2; }
+.gmd-panel-add-btn { @apply absolute right-6 mt-0.5 !w-8 !h-8; }
+.gmd-app-shell-body { flex: 1; display: flex; overflow: hidden; }
+.gmd-layer-item-locked { color: var(--p-orange-500); }

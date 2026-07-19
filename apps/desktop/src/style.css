@@ -1,25 +1,13 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,700&family=Inter:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
+@source "../../packages";
 @import "primeicons/primeicons.css";
 
 @layer theme, base, primevue, components, utilities;
 
 @theme {
-  --color-gm-primary:        #D4AF37;
-  --color-gm-accent:         #0F172A;
-  --color-gm-text-dark:      #1E293B;
-  --color-gm-text-muted:     #64748B;
-  --color-gm-bullish:        #10B981;
-  --color-gm-bullish-bg:     #ecfdf5;
-  --color-gm-bearish:        #DC2626;
-  --color-gm-bearish-bg:     #fef2f2;
-  --color-gm-border-light:   #E2E8F0;
-  --color-gm-border-dark:    #94A3B8;
-  --color-gm-warning:        #eab308;
-  --color-gm-error:          #ef4444;
-
   --font-montserrat: "Montserrat", sans-serif;
-  --font-inter:      "Inter", sans-serif;
+  --font-inter: "Inter", sans-serif;
 }
 
 :root {
@@ -31,6 +19,9 @@
   --block-font-size:     inherit;
   --block-font-weight:   inherit;
   --block-font-family:   var(--doc-body-font, var(--font-inter));
+  --block-heading-font:  var(--doc-heading-font, var(--font-montserrat));
+  --block-primary-color: var(--doc-primary, var(--color-gm-primary));
+  --block-accent-color:  var(--doc-accent, var(--color-gm-accent));
   --block-text-align:    left;
   --block-font-style:       normal;
   --block-text-decoration:  none;
@@ -45,44 +36,38 @@
   min-height: var(--gm-page-height, 297mm);
 }
 
-.bg-transparent-checker {
-  background-image: linear-gradient(45deg, #334155 25%, transparent 25%),
-    linear-gradient(-45deg, #334155 25%, transparent 25%),
-    linear-gradient(45deg, transparent 75%, #334155 75%),
-    linear-gradient(-45deg, transparent 75%, #334155 75%);
-  background-size: 8px 8px;
-  background-position: 0 0, 0 4px, 4px -4px, -4px 0px;
-}
-
 @layer base {
   body {
-    @apply bg-slate-950 font-inter leading-snug;
-    -webkit-print-color-adjust: exact;
-    color: #e2e8f0;
+    @apply font-sans m-0 p-0 antialiased;
+    background: var(--p-surface-ground);
+    color: var(--p-text-color);
+  }
+
+  /* Custom Scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: color-mix(in srgb, var(--p-content-border-color) 80%, transparent);
+    border-radius: 4px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--p-content-border-color);
   }
   * {
     scrollbar-width: thin;
-    scrollbar-color: #334155 transparent;
+    scrollbar-color: var(--p-content-border-color) transparent;
+  }
+  @media print {
+    body { background: transparent; }
   }
 }
 
 @layer components {
-  .gm-canvas-viewport {
-    background-color: #e5e7eb;
-    background-image: radial-gradient(circle, rgba(0,0,0,0.12) 1px, transparent 1px);
-    background-size: 24px 24px;
-  }
-  .gm-page-container {
-    @apply flex flex-col items-center py-16 gap-16 min-w-max;
-  }
-  .gm-doc-page {
-    @apply bg-white mx-auto relative shadow-[0_8px_32px_rgba(0,0,0,0.25),0_2px_8px_rgba(0,0,0,0.15)] overflow-hidden;
-  }
-  @media print {
-    body           { @apply bg-transparent; }
-    .gm-page-container { @apply gap-0 block py-0; }
-    .gm-doc-page   { @apply m-0 shadow-none break-after-page; }
-  }
   .tiptap {
     outline: none;
     cursor: text;
